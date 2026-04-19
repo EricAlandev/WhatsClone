@@ -17,20 +17,28 @@ export async function POST(req: Request){
             )
         })
 
-        console.log("after the request", request);
-
         if(!request.ok){
             throw new Error("Server error" + request.status)
         }
 
         const response = await request.json();
 
-        return response;
+        return new Response(JSON.stringify(response), {
+            status: 200, 
+            headers: {
+                'Content-type' : 'application/json'
+            }
+        })
 
     }
 
-    catch(error){
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 400 });
+    catch(error: any){
+        return new Response(JSON.stringify(error?.message), {
+            status: 400, 
+            headers: {
+                'Content-type' : 'application/json'
+            }
+        })
     }
 
 }

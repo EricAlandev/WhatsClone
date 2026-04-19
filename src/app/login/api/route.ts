@@ -4,14 +4,14 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request){
 
     try{
-        const body = await req.json();
+        const data = await req.json();
         const request = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/api/login`, {
             method: 'POST',
             headers: {
                 'Content-type' : 'application/json'
             },
             body: JSON.stringify(
-                body
+                data
             )
         })
 
@@ -21,12 +21,22 @@ export async function POST(req: Request){
 
         const response = await request.json();
 
-        return response;
+        return new Response(JSON.stringify(response), {
+            status: 200, 
+            headers: {
+                'Content-type' : 'application/json'
+            }
+        })
 
     }
 
-    catch(error){
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 400 });
+    catch(error: any){
+        return new Response(JSON.stringify(error?.message), {
+            status: 400, 
+            headers: {
+                'Content-type' : 'application/json'
+            }
+        })
     }
 
 }

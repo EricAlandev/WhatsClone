@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.services.loginAndRegister.UserService;
 
@@ -16,10 +17,12 @@ public class UserController {
     private UserService  userService; 
 
     @PostMapping
-    public ResponseEntity<EntityUser> postMethodName(@RequestBody EntityUser user) {
+    public UserResponseDTO postMethodName(@RequestBody EntityUser user) {
 
-        EntityUser callService = userService.saveUser(user);
+        UserResponseDTO callService = userService.saveUser(user);
+
+        System.out.println("value comming to front-end " + callService);
         
-        return ResponseEntity.ok(callService);
+        return callService;
     }
 }

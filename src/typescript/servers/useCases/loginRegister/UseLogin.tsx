@@ -6,8 +6,9 @@ import { makeLogin } from "../../services/loginRegister/ServiceLogin"
 export default function useLogin(){
 
     const login = async(data: UserType) => {
-        if(data !== undefined && data){
+        if(data){
             try{
+                console.log("the data in front-end is", data);
                 const verificationLogin = await makeLogin(data);
             }
 

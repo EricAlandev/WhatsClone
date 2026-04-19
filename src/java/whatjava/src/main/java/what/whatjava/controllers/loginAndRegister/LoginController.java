@@ -1,9 +1,9 @@
 package what.whatjava.controllers.loginAndRegister; 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.services.loginAndRegister.LoginService;
 
@@ -16,10 +16,12 @@ public class LoginController {
     private LoginService loginService; 
 
     @PostMapping
-    public ResponseEntity<EntityUser> postMethodName(@RequestBody EntityUser user) {
+    public UserResponseDTO postMethodName(@RequestBody EntityUser user) {
 
-        EntityUser callService = loginService.Login(user);
+        UserResponseDTO callService = loginService.Login(user);
+
+        System.out.println("value from login" + callService);
         
-        return ResponseEntity.ok(callService);
+        return callService;
     }
 }

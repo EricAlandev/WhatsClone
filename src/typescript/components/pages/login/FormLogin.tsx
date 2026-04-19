@@ -1,3 +1,5 @@
+'use client'
+
 import { UserType } from "@/typescript/types/UserType";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,7 +11,7 @@ type LoginForm = {
 export default function FormLogin({ send }: LoginForm) {
 
     const [data, setData] = useState<UserType>({
-        name: "",
+        email: "",
         password: ""
     });
 
@@ -37,12 +39,12 @@ export default function FormLogin({ send }: LoginForm) {
                 className="flex flex-col"
             >
                 {/* Name Input */}
-                <label htmlFor="name">Nome</label>
+                <label htmlFor="email">Email</label>
                 <input
-                    id="name"
-                    name="name"
+                    id="email"
+                    name="email"
                     type="text"
-                    value={data.name}
+                    value={data.email}
                     onChange={handleChange}
                     className="bg-[#A0A0A0] rounded-md p-1"
                 />
