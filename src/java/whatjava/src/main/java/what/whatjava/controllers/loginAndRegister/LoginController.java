@@ -18,6 +18,8 @@ public class LoginController {
     @PostMapping
     public UserResponseDTO postMethodName(@RequestBody EntityUser user) {
 
+        System.out.println("value from request body" + user);
+
         UserResponseDTO callService = loginService.Login(user);
 
         System.out.println("value from login" + callService);

@@ -2,7 +2,7 @@
 
 import { UserType } from "@/typescript/types/UserType"
 
-export const makeLogin = async(data: UserType) => {
+export const userService = async(data: UserType) => {
     const loginFetch = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/login/api`, {
         method: 'POST',
         headers: {
@@ -16,8 +16,6 @@ export const makeLogin = async(data: UserType) => {
     }
 
     const response = await loginFetch.json();
-
-    console.log("response valuesss", response);
 
     return response;
     

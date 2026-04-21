@@ -20,6 +20,8 @@ public class LoginService {
     
     public UserResponseDTO Login(EntityUser user){
 
+                System.out.println("user value" + user);
+
                 //try the search
                 Optional<EntityUser> userFromDatabase = userRepository.findByEmail(user.getEmail());
 
@@ -27,8 +29,9 @@ public class LoginService {
                 if(userFromDatabase == null || userFromDatabase.isEmpty()){
                     throw new RuntimeException("User dosn't exists");
                 }
-
+                
                 EntityUser userFinded = userFromDatabase.get();
+
                 //compare the passwords
                 if(!userFinded.getPassword().equals(user.getPassword())){
                     throw new RuntimeException("Password its wrong");
@@ -43,6 +46,7 @@ public class LoginService {
                 return UserResponseDTO.builder()
                 .id(userFinded.getId())
                 .name(userFinded.getName())
+                .email(userFinded.getEmail())
                 .token(userFinded.getToken())
                 .build();
                 }
