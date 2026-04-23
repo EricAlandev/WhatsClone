@@ -1,12 +1,9 @@
 
 package what.whatjava.services.loginAndRegister; 
 
-import java.lang.classfile.ClassFile.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,15 +95,24 @@ public class UserService {
         Optional<EntityUser> userToAdd = userRepository.findById(id);
 
         if(actualUser != null && !actualUser.isEmpty()){
+            //objects to create the relationship of friends.
             EntityUserFriend entityUserFriend = new EntityUserFriend();
+            EntityUserFriend entityFriendUser = new EntityUserFriend();
 
             EntityUser actualUserVerifyed = actualUser.get();
             EntityUser userAddVerifyed = userToAdd.get();
 
+            //creating the user & friend
             entityUserFriend.setFriends_id(userAddVerifyed);
             entityUserFriend.setUserID(actualUserVerifyed);
 
             userFriendsRepository.save(entityUserFriend);
+
+            //creating the friend & user
+            entityFriendUser.setFriends_id(userAddVerifyed);
+            entityFriendUser.setUserID(actualUserVerifyed);
+
+            userFriendsRepository.save(entityFriendUser);
 
             return "You make a new friend: " + userAddVerifyed.getName();
         }

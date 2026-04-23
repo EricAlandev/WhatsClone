@@ -53,12 +53,9 @@ public class EntityUser {
 
 
     //CHATS CONTAINERS SYSTEM
-    @OneToMany(mappedBy = "user_1", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL)
     private List<EntityChatTable> user1;
 
-    @OneToMany(mappedBy = "user_2", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL)
     private List<EntityChatTable> user2;
-
-    @OneToMany(mappedBy = "user_id", cascade = CascadeType.ALL)
-    private List<EntityMessage> messages;
 }

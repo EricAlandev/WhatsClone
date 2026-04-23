@@ -1,4 +1,6 @@
 package what.whatjava.entitys.chats;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 import what.whatjava.entitys.users.EntityUser;
@@ -25,5 +27,8 @@ public class EntityMessage {
 
     @Column
     private String status;
+
+    @OneToMany(mappedBy = "messageID", cascade = CascadeType.ALL)
+    private List<EntityMessagesChat> messageChat;
 
 }

@@ -1,4 +1,6 @@
 package what.whatjava.entitys.chats;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 import what.whatjava.entitys.users.EntityUser;
@@ -18,14 +20,14 @@ public class EntityChatTable {
 
     @ManyToOne
     @JoinColumn(name = "user_1")
-    private EntityUser user_1;
+    private EntityUser user1;
 
     @ManyToOne
     @JoinColumn(name = "user_2")
-    private EntityUser user_2;
+    private EntityUser user2;
 
-    @ManyToOne
-    @JoinColumn(name = "message_id")
-    private EntityMessage message;
+    @OneToMany(mappedBy = "chatTableID", cascade = CascadeType.ALL)
+    private List<EntityMessagesChat> messageChat;
+
 
 }

@@ -3,19 +3,29 @@
 import AuthorizationComponent from "@/typescript/components/authorizations/AuthorizationComponent";
 import Header from "@/typescript/components/headers/Header";
 import RenderChats from "@/typescript/components/pages/homepage/RenderChats";
+import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
+import { useEffect } from "react";
 
 
 export default function HomepageUser(){
 
+    const {friendsFinded, SearchFriends , callAllChats} = useChatUseCase();
+    
+    useEffect(() => {
+        callAllChats()
+    }, []);
 
     return(
         <div
             className="flex flex-col pb-2 bg-[#161717]"
         >
             <AuthorizationComponent>
-                <Header/>
+                <Header
+                    onSearch={SearchFriends}
+                />
+                
                 <RenderChats
-                    chats={"/"}
+                    chats={friendsFinded}
                 />
             </AuthorizationComponent>
         </div>

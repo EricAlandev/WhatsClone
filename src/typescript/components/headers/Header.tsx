@@ -3,9 +3,14 @@
 import Link from "next/link";
 
 import SearchBar from "@/typescript/components/headers/SearchBar";
+import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
 
-export default function Header(){
+type Header = {
+    onSearch: any
+}
 
+export default function Header({onSearch} : Header){
+    
     return(
         <div
             className="mx-auto mt-5"
@@ -32,7 +37,11 @@ export default function Header(){
                 </Link>
             </div>
 
-            <SearchBar/>
+            <SearchBar
+                send={async (e) => {
+                    await onSearch(e?.text)
+                }}
+            />
         </div>
     )
 }

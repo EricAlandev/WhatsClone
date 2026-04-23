@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import what.whatjava.entitys.chats.EntityChatTable;
 import what.whatjava.entitys.users.EntityUser;
 
 @Repository
-public interface UserRepository extends JpaRepository<EntityUser, Long> {
-    Optional<EntityUser> findById(Long id);
-    Optional<EntityUser> findByEmail(String email);
-    List<EntityUser> findByNameContainingIgnoreCase(String name);
+public interface ChatRepository extends JpaRepository<EntityChatTable, Long> {
 
+    List<EntityChatTable> findByUser1(EntityUser user);
+    List<EntityChatTable> findByUser2(EntityUser user);
+    
 }
+

@@ -70,6 +70,25 @@ export default function SkeListValue({
                 </Link>
             )}
 
+            {type === "chat" && (
+                <Link
+                    href={`/${idUser}`}
+                    className="flex items-center gap-4 mt-5"
+                >
+                    <img
+                        src={image_url}
+                        className="max-w-[30px] max-h-[30px]"
+                    />
+
+                    <div
+                        className="text-[white]"
+                    >
+                        <p>{name}</p>
+                    </div>
+
+                </Link>
+            )}
+
             {type === "add" && (
                 <div
                     className="relative flex items-center w-[90vw] min-h-[50px] mt-5 p-3 gap-3 "

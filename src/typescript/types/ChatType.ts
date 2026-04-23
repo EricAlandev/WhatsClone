@@ -1,6 +1,7 @@
 
 
 export type ChatType = {
-    profile_picture: string,
-    nameUser: string
+    id: number,
+    profile_picture?: string,
+    name: string
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent,FormEvent, useState } from "react"
+import { ChangeEvent,FormEvent, useEffect, useState } from "react"
 
 type SearchBar = {
     send: (value: valueInputs) => void;
@@ -26,6 +26,16 @@ export default function SearchBar({send} : SearchBar){
         e.preventDefault(); 
         send(valueInput)
     };
+
+    useEffect(() => {
+        if(valueInput?.text === ""){
+            send({text: ""});
+        }
+        else{
+            send(valueInput);
+        }
+    }, [valueInput]);
+    
 
     return(
         <div
