@@ -6,6 +6,7 @@ export type UserType = {
     email?: string,
     password?: string,
     birthday?: string,
+    description?: string,
     city?: string,
     country?: string,
     ddd?: string,

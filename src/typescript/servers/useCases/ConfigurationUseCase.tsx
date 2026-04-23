@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import { callConfigurationsListService } from "../services/ServiceConfiguration";
 import { ConfigsList } from "@/typescript/types/ConfigsListType";
+import { useAuth } from "@/typescript/contexts/GlobalContext";
 
-export default function ConfigurationUseCase(){
+export default function useConfigurationUseCase(){
+    console.log("inside of configurationUseCase");
 
     const [list, setList] = useState<ConfigsList[]>([]);
-
-    useEffect(() => {
-        console.log("inside of useeffet");        callConfigurationsList();
-    }, []);
 
     const callConfigurationsList = async() => {
         try{
@@ -24,6 +22,11 @@ export default function ConfigurationUseCase(){
 
         }
     }
+
+    useEffect(() => {
+        console.log("inside of useeffet");        
+            callConfigurationsList();
+    }, []);
 
 
     return {list};

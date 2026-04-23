@@ -30,9 +30,8 @@ export default function HeaderConfig( {name} : HeaderConfig){
                 />
             </div>
 
-            {/*Profile picture + name */}
-
-            <div
+            {/*Profile picture + name - optional*/}
+                <div
                 className="flex flex-col items-center mt-5 gap-2"
             >
                 <img
@@ -46,8 +45,6 @@ export default function HeaderConfig( {name} : HeaderConfig){
                     {name}
                 </p>
             </div>
-
-
         </div>
     )
 }

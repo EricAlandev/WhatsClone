@@ -16,6 +16,7 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private String birthday;
+    private String description;
     private String token;
     private NumberDTO number;
     private NacionalityDTO nacionality;
