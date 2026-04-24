@@ -20,7 +20,7 @@ public class ChatController {
     @Autowired
     private ChatService chatService; 
 
-        @GetMapping("/pull")
+        @GetMapping
         public List<ChatDTO> findChats(@RequestHeader("Authorization") String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
@@ -35,13 +35,13 @@ public class ChatController {
         }
 
         @PostMapping("/search")
-        public List<ChatDTO> searchFriendsToChat(@RequestBody SearchDTO valueSearch,  @RequestHeader("Authorization") String token) {
+        public List<ChatDTO> searchFriendsToChat(@RequestParam("search") String valueSearch , @RequestHeader("Authorization") String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
         );
 
-        List<ChatDTO> callService = chatService.searchFriendsService(valueSearch.getSearch() , cleanToken);
+        List<ChatDTO> callService = chatService.searchFriendsService(valueSearch , cleanToken);
 
         System.out.println("value comming to front-end " + callService);
         

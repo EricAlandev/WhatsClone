@@ -72,7 +72,7 @@ export default function SkeListValue({
 
             {type === "chat" && (
                 <Link
-                    href={`/${idUser}`}
+                    href={`/chat/${idUser}`}
                     className="flex items-center gap-4 mt-5"
                 >
                     <img

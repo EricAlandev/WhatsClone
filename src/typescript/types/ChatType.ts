@@ -5,3 +5,8 @@ export type ChatType = {
     profile_picture?: string,
     name: string
 }
+
+export type MessageType = {
+   text: string,
+   profile_picture?: string
+}

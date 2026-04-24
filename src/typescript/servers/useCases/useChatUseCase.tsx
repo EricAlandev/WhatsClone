@@ -1,15 +1,18 @@
 'use client'
 
 import { UserType } from "@/typescript/types/UserType"
-import { callAllChatsService, searchFriendsService } from "../services/ServiceSearchFriends"
+import { callAllChatsService, callAllMessagesService, searchFriendsService } from "../services/ServiceSearchFriends"
 import { useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
-import { ChatType } from "@/typescript/types/ChatType";
+import { ChatType, MessageType } from "@/typescript/types/ChatType";
 
 
 export default function useChatUseCase(){
 
+    const [originalChats, setOriginalChats] = useState<ChatType[] | []>([]);
     const [friendsFinded, setFriendsFinded] = useState<ChatType[] | []>([]);
+    const [messages, setMessages] = useState<MessageType[] | []>([]);
+
 
     const {token} = useAuth();
 
@@ -17,7 +20,6 @@ export default function useChatUseCase(){
         try{
             if(text && token){
                 const resultSearch : ChatType[] = await searchFriendsService(text, token);
-                console.log("resultSearch", resultSearch);
                 setFriendsFinded(resultSearch);
             }
         }
@@ -32,7 +34,7 @@ export default function useChatUseCase(){
             if(token){
                 const resultSearch : ChatType[] = await callAllChatsService(token);
                 console.log("resultSearch", resultSearch);
-                setFriendsFinded(resultSearch);
+                setOriginalChats(resultSearch);
             }
         }
 
@@ -41,5 +43,25 @@ export default function useChatUseCase(){
         }
     }
 
-    return {friendsFinded ,SearchFriends, callAllChats}
+    const callMessages = async(id: string, token: string) => {
+        try{
+            if(token){
+                const resultSearch : MessageType[] = await callAllMessagesService(id, token);
+                console.log("resultSearch", resultSearch);
+                setMessages(resultSearch);
+            }
+        }
+
+        catch(error){
+
+        }
+    }
+
+    return {
+        friendsFinded ,
+        SearchFriends, 
+        callAllChats, 
+        callMessages,
+        messages
+    }
 }

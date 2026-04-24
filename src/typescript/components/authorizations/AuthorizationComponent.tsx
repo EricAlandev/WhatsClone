@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode } from "react";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { useRouter } from "next/navigation";

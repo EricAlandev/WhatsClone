@@ -4,6 +4,7 @@ import { ChangeEvent,FormEvent, useEffect, useState } from "react"
 
 type SearchBar = {
     send: (value: valueInputs) => void;
+    
 }
 
 type valueInputs = {
@@ -28,7 +29,7 @@ export default function SearchBar({send} : SearchBar){
     };
 
     useEffect(() => {
-        if(valueInput?.text === ""){
+        if(valueInput?.text == ""){
             send({text: ""});
         }
         else{

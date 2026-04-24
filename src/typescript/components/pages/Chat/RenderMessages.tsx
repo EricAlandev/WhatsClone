@@ -7,13 +7,13 @@ type RenderChat = {
     chats: ChatType[] | []
 }
 
-export default function RenderChats({chats}: RenderChat){
+export default function RenderMessages({chats}: RenderChat){
 
     return(
         <div
-            className="w-[90vw] min-h-screen mx-auto"
+            className="w-[90vw] h-[90vh] max-h-[90vh]  mx-auto overflow-y-auto"
         >
-            {chats?.length > 0 ?(
+            {chats?.length > 0 &&(
                 chats?.map((c) => (
                     <SkeListValue
                         type="chat"
@@ -21,12 +21,6 @@ export default function RenderChats({chats}: RenderChat){
                         name={c?.name}
                     />
                 ))
-            ) : (
-                <p
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-3 text-[#F1F1F1]"
-                >
-                    Without any converse yet.
-                </p>
             )}
         </div>
     )

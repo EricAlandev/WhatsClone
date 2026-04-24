@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import SearchBar from "@/typescript/components/headers/SearchBar";
-import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
 
 type Header = {
     onSearch: any
