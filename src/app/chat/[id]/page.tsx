@@ -6,22 +6,24 @@ import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
 import SendMessage from "@/typescript/components/pages/Chat/SendMessage";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ChatPage(){
 
-    const useParams = useSearchParams();
-    const id = useParams.get("id");
+    const {id} = useParams();
 
-    const {callMessages, messages} = useChatUseCase();
+    const {callMessages, sendMessage, messages} = useChatUseCase();
     const {token} = useAuth();
 
+
+    console.log("inside of id page");
     useEffect(() => {
-        if(token && id){
-            callMessages(id,token);
-        }
-    }, []);
+            console.log("Inside of the token and id", id);
+            if(id){
+                callMessages(id, token);
+            }
+    }, [id, token, callMessages]);
 
     return(
         <div
@@ -32,7 +34,13 @@ export default function ChatPage(){
                 <RenderMessages
                     chats={messages}
                 />
-                <SendMessage/>
+                <SendMessage
+                    send={(message) => {
+                       if(id && token){
+                            sendMessage(id ,token, message)
+                       }
+                    }}
+                />
             </AuthorizationComponent>
         </div>
     )

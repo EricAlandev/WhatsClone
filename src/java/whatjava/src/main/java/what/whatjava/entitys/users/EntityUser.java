@@ -48,7 +48,7 @@ public class EntityUser {
     @OneToMany(mappedBy = "userID", cascade = CascadeType.ALL)
     private List<EntityUserFriend> myUserId;
 
-    @OneToMany(mappedBy = "friends_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "friendsId", cascade = CascadeType.ALL)
     private List<EntityUserFriend> Friends;
 
 

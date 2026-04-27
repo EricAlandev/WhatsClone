@@ -1,9 +1,8 @@
-
-export const searchFriendsService = async(text: string, token: string,) => {
+export const callAllMessagesService = async(id:string, token: string,) => {
     try{
-        console.log("value text", text);
-        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/search?search=${text}`, {
-            method: "POST",
+        console.log("Inside of call service", id, token);
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/${id}`, {
+            method: "GET",
             headers: {
                 'Content-type' : 'application/json',
                 'Authorization' : `Bearer ${token}`
@@ -24,15 +23,16 @@ export const searchFriendsService = async(text: string, token: string,) => {
     }
 }
 
-
-export const callAllChatsService = async(token: string,) => {
+export const sendMessageService = async(id:string, token: string,  message: string) => {
     try{
-        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat`, {
-            method: "GET",
+        console.log("Inside of call service", id, token);
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/${id}`, {
+            method: "POST",
             headers: {
                 'Content-type' : 'application/json',
                 'Authorization' : `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify({message : message})
         })
 
         if(!call.ok){

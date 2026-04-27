@@ -33,7 +33,7 @@ export function GlobalContext({ children }: { children: ReactNode }) {
 
         if (storedToken) {
             try {
-                setUser(JSON.parse(storedToken));
+                setToken(JSON.parse(storedToken));
             } catch (error) {
                 console.error("Failed to parse user from storage", error);
                 localStorage.removeItem('token');

@@ -8,5 +8,5 @@ export type ChatType = {
 
 export type MessageType = {
    text: string,
-   profile_picture?: string
+   profilePicture?: string
 }

@@ -6,14 +6,18 @@ import java.util.Optional;
 
 import javax.management.RuntimeErrorException;
 
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import what.whatjava.dtos.ChatDTO;
+import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.UserResponseDTO.message;
 import what.whatjava.dtos.UserResponseDTO.user_1;
 import what.whatjava.entitys.chats.EntityChatTable;
+import what.whatjava.entitys.chats.EntityMessage;
 import what.whatjava.entitys.chats.EntityMessagesChat;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.entitys.users.EntityUserFriend;
@@ -36,6 +40,14 @@ public class ChatService {
     //responsable to link the user_1 to user_2
     @Autowired
     private ChatRepository chatRepository;
+
+    //responsable to link chat and message
+    @Autowired
+    private MessagesChatRepository messagesChatRepository;
+
+    //messages
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -77,7 +89,7 @@ public class ChatService {
         //verify if someFriend beat with the search;
         for(int i = 0; i < usersSearch.size(); i++){
             for(int y = 0; y < listFriends.size(); y++){
-                if(listFriends.get(y).getFriends_id().getId().equals(usersSearch.get(i).getId())){
+                if(listFriends.get(y).getFriendsId().getId().equals(usersSearch.get(i).getId())){
                     searchedFriends.add(usersSearch.get(i));
                     System.out.println("id for" + i);
                     break;
@@ -131,4 +143,89 @@ public class ChatService {
             ).toList();
     
     }
+
+    //FindMessages
+    public List<ChatDTO> findMessages(String id, String cleanToken){
+
+        Claims claims= jwtService.verifyToken(cleanToken);
+        Long idLoggedUser = claims.get("id", Long.class);
+
+        Long idOtherUser = Long.parseLong(id);
+
+        //Verify if exist the users;
+        EntityUser actualUser = userRepository.findById(idLoggedUser).orElseThrow(() -> new RuntimeException("Actual user dosn't exist"));
+        
+        EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("Other user dosn't exist"));
+
+        //verify if they are friends;
+        EntityUserFriend friends = userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
+
+        Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser);
+
+        //message to return (can be fulled or not);
+        List<ChatDTO> messagesToReturn = new ArrayList<>();
+
+        if(!chatTable.isEmpty()){
+            EntityChatTable chatTableFound = chatTable.get();
+
+            List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound);
+
+            //clean the messages and return
+            if(messagesChat.size() > 0){
+               
+               return messagesChat.stream()
+                .<ChatDTO>map(message -> ChatDTO.builder()
+                    .id(message.getId())
+                    .name(message.getMessageID().getUserID().getName())
+                    .message(message.getMessageID().getMessage())
+                    .status(message.getMessageID().getStatus())
+                    .build()
+                ).toList();
+            }
+
+            else {
+                return messagesToReturn;
+            }
+        }
+
+        return messagesToReturn;
+    }  
+    
+    //sendMessage
+    @Transactional
+    public String sendMessage(String id, String cleanToken, String message){
+
+        try {
+            Claims claims = jwtService.verifyToken(cleanToken);
+            Long idActualUser = claims.get(id, Long.class);
+            Long idOtherUser = Long.parseLong(id);
+
+            //find users
+            EntityUser actualUser = userRepository.findById(idActualUser).orElseThrow(() -> new RuntimeException("Actual user not found"));
+
+            EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("other user not found"));
+
+            //find table
+            EntityChatTable chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser).orElseThrow(() -> new RuntimeException("Chat table didn't found"));
+
+            //create message
+            EntityMessage messageValue = new EntityMessage();
+
+            messageValue.setMessage(message);
+            messageValue.setStatus("not viewed");
+            messageValue.setUserID(actualUser);
+            messageRepository.save(messageValue);
+
+            EntityMessagesChat messagesChat = new EntityMessagesChat();
+
+            messagesChat.setChatTableID(chatTable);
+            messagesChat.setMessageID(messageValue);
+            messagesChatRepository.save(messagesChat);
+            
+            return "200 - message";
+        } catch (Exception e) {
+            return "fail in the process of send the message";
+        }
+        
+    } 
 }

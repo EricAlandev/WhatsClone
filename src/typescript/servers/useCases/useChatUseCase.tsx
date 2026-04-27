@@ -1,10 +1,11 @@
 'use client'
 
 import { UserType } from "@/typescript/types/UserType"
-import { callAllChatsService, callAllMessagesService, searchFriendsService } from "../services/ServiceSearchFriends"
-import { useState } from "react"
+import { callAllChatsService, searchFriendsService } from "../services/ServiceSearchFriends"
+import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType } from "@/typescript/types/ChatType";
+import { callAllMessagesService, sendMessageService } from "../services/ServiceChat";
 
 
 export default function useChatUseCase(){
@@ -13,10 +14,7 @@ export default function useChatUseCase(){
     const [friendsFinded, setFriendsFinded] = useState<ChatType[] | []>([]);
     const [messages, setMessages] = useState<MessageType[] | []>([]);
 
-
-    const {token} = useAuth();
-
-    const SearchFriends = async(text: string) => {
+    const SearchFriends = async(text: string, token: string) => {
         try{
             if(text && token){
                 const resultSearch : ChatType[] = await searchFriendsService(text, token);
@@ -29,7 +27,7 @@ export default function useChatUseCase(){
         }
     }
 
-    const callAllChats = async() => {
+    const callAllChats = async(token: string) => {
         try{
             if(token){
                 const resultSearch : ChatType[] = await callAllChatsService(token);
@@ -43,9 +41,10 @@ export default function useChatUseCase(){
         }
     }
 
-    const callMessages = async(id: string, token: string) => {
+    const callMessages = useCallback(async(id: string, token: string) => {
         try{
             if(token){
+                console.log("Inside of the call messages", token, id);
                 const resultSearch : MessageType[] = await callAllMessagesService(id, token);
                 console.log("resultSearch", resultSearch);
                 setMessages(resultSearch);
@@ -55,13 +54,29 @@ export default function useChatUseCase(){
         catch(error){
 
         }
-    }
+    }, []);
+
+    const sendMessage = async(id: string, token: string, message: string) => {
+        try{
+            if(token){
+                console.log("Inside of the call messages", token, id);
+                const resultSearch : MessageType[] = await sendMessageService(id, token, message);
+                console.log("resultSearch", resultSearch);
+                setMessages(resultSearch);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
 
     return {
         friendsFinded ,
         SearchFriends, 
         callAllChats, 
         callMessages,
-        messages
+        messages,
+        sendMessage
     }
 }

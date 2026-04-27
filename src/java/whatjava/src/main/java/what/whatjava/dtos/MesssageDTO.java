@@ -9,10 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChatDTO {
+public class MesssageDTO {
     private Long id;
-    private String profilePicture;
-    private String name;
     private String message;
-    private String status;
 }

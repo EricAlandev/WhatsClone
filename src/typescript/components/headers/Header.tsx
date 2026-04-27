@@ -5,10 +5,11 @@ import Link from "next/link";
 import SearchBar from "@/typescript/components/headers/SearchBar";
 
 type Header = {
-    onSearch: any
+    onSearch: any,
+    token: string
 }
 
-export default function Header({onSearch} : Header){
+export default function Header({onSearch, token} : Header){
     
     return(
         <div
@@ -38,7 +39,7 @@ export default function Header({onSearch} : Header){
 
             <SearchBar
                 send={async (e) => {
-                    await onSearch(e?.text)
+                    await onSearch(e?.text, token)
                 }}
             />
         </div>

@@ -1,7 +1,11 @@
 import { MessageType } from "@/typescript/types/ChatType";
 import { InputHTMLAttributes, useState } from "react"
 
-export default function SendMessage(){
+type SendMessage = {
+    send: (message: MessageType) => void
+}
+
+export default function SendMessage({send} : SendMessage){
 
     const [message, setMessage] = useState<MessageType>({text: ""});
 
@@ -17,6 +21,10 @@ export default function SendMessage(){
             className="fixed left-1/2 -translate-x-1/2 bottom-3"
         >
             <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    send(message);
+                }}
                 className="flex w-[90vw] h-[5vh] bg-[#2E2F2F] rounded-[15px]"
             >
                 <input

@@ -20,7 +20,7 @@ public class EntityMessage {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private EntityUser user_id;
+    private EntityUser userID;
 
     @Column
     private String message;

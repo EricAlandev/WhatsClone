@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import what.whatjava.dtos.ChatDTO;
+import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.SearchDTO;
 import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.services.ChatService;
@@ -42,6 +43,36 @@ public class ChatController {
         );
 
         List<ChatDTO> callService = chatService.searchFriendsService(valueSearch , cleanToken);
+
+        System.out.println("value comming to front-end " + callService);
+        
+        return callService;
+    }
+
+        @GetMapping("/messages/{id}")
+        public List<ChatDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token) {
+
+        String cleanToken = (token.startsWith("Bearer ") 
+                ? token.substring(7) : token
+        );
+
+        List<ChatDTO> callService = chatService.findMessages(id , cleanToken);
+
+        System.out.println("value comming to front-end " + callService);
+        
+        return callService;
+    }
+
+        @PostMapping("/messages/{id}")
+        public String sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message) {
+
+        String cleanToken = (token.startsWith("Bearer ") 
+                ? token.substring(7) : token
+        );
+
+        System.out.println("value from post" + id + message.getMessage() + token);
+
+        String callService = chatService.sendMessage(id , cleanToken, message.getMessage());
 
         System.out.println("value comming to front-end " + callService);
         

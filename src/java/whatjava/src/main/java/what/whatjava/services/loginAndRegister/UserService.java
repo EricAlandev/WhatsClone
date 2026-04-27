@@ -103,13 +103,13 @@ public class UserService {
             EntityUser userAddVerifyed = userToAdd.get();
 
             //creating the user & friend
-            entityUserFriend.setFriends_id(userAddVerifyed);
+            entityUserFriend.setFriendsId(userAddVerifyed);
             entityUserFriend.setUserID(actualUserVerifyed);
 
             userFriendsRepository.save(entityUserFriend);
 
             //creating the friend & user
-            entityFriendUser.setFriends_id(userAddVerifyed);
+            entityFriendUser.setFriendsId(userAddVerifyed);
             entityFriendUser.setUserID(actualUserVerifyed);
 
             userFriendsRepository.save(entityFriendUser);

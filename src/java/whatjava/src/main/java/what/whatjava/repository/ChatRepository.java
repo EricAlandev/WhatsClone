@@ -13,6 +13,10 @@ import what.whatjava.entitys.users.EntityUser;
 public interface ChatRepository extends JpaRepository<EntityChatTable, Long> {
 
     List<EntityChatTable> findByUser1(EntityUser user);
+
+    Optional<EntityChatTable> findByUser1AndUser2(EntityUser user, EntityUser user2);
+
+
     List<EntityChatTable> findByUser2(EntityUser user);
     
 }
