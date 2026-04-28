@@ -23,16 +23,16 @@ export const callAllMessagesService = async(id:string, token: string,) => {
     }
 }
 
-export const sendMessageService = async(id:string, token: string,  message: string) => {
+export const sendMessageService = async(id:string, token: string,  message: any) => {
     try{
-        console.log("Inside of call service", id, token);
+        console.log("Inside of call service", id, token, message);
         const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/${id}`, {
             method: "POST",
             headers: {
                 'Content-type' : 'application/json',
                 'Authorization' : `Bearer ${token}`
             },
-            body: JSON.stringify({message : message})
+            body: JSON.stringify({message : message?.text})
         })
 
         if(!call.ok){

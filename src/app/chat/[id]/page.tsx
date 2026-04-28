@@ -14,7 +14,7 @@ export default function ChatPage(){
     const {id} = useParams();
 
     const {callMessages, sendMessage, messages} = useChatUseCase();
-    const {token} = useAuth();
+    const {user, token} = useAuth();
 
 
     console.log("inside of id page");
@@ -32,6 +32,7 @@ export default function ChatPage(){
             <AuthorizationComponent>
                 <HeaderChatPage/>
                 <RenderMessages
+                    idOfLoggedUser={user?.id}
                     chats={messages}
                 />
                 <SendMessage

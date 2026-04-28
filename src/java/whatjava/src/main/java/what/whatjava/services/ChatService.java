@@ -171,11 +171,23 @@ public class ChatService {
             List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound);
 
             //clean the messages and return
-            if(messagesChat.size() > 0){
+            if(messagesChat.size() > 0){    
+
+               //visualize all of the messages
+               for(int i =0; i < messagesChat.size(); i++){
+                System.out.println("inside of the for");
+                    if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
+                        System.out.println("inside of the if");
+                        messagesChat.get(i).getMessageID().setStatus("Visualized");
+
+                        messagesChatRepository.save(messagesChat.get(i));
+                    }
+               }
                
                return messagesChat.stream()
                 .<ChatDTO>map(message -> ChatDTO.builder()
                     .id(message.getId())
+                    .idUserMessage(message.getMessageID().getUserID().getId())
                     .name(message.getMessageID().getUserID().getName())
                     .message(message.getMessageID().getMessage())
                     .status(message.getMessageID().getStatus())
@@ -197,16 +209,35 @@ public class ChatService {
 
         try {
             Claims claims = jwtService.verifyToken(cleanToken);
-            Long idActualUser = claims.get(id, Long.class);
+            Long idActualUser = claims.get("id", Long.class);
             Long idOtherUser = Long.parseLong(id);
 
+            System.out.println("after the claims" + idActualUser + idOtherUser);
             //find users
             EntityUser actualUser = userRepository.findById(idActualUser).orElseThrow(() -> new RuntimeException("Actual user not found"));
 
             EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("other user not found"));
+            
+            System.out.println("after the creation of users" + actualUser + otherUser);
 
-            //find table
-            EntityChatTable chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser).orElseThrow(() -> new RuntimeException("Chat table didn't found"));
+            //find table or create
+            Optional<EntityChatTable> chatTableFound = chatRepository.findByUser1AndUser2(actualUser, otherUser);
+            EntityChatTable chatTable = new EntityChatTable();
+
+            if(chatTableFound.isEmpty()){
+                EntityChatTable newChatTable = new EntityChatTable();
+                
+                newChatTable.setUser1(actualUser);
+                newChatTable.setUser2(otherUser);
+                chatRepository.save(newChatTable);
+                chatTable = newChatTable;
+            }
+
+            else{
+                chatTable = chatTableFound.get();
+            }
+
+            System.out.println("after the chatTable" + chatTableFound);
 
             //create message
             EntityMessage messageValue = new EntityMessage();
@@ -216,11 +247,17 @@ public class ChatService {
             messageValue.setUserID(actualUser);
             messageRepository.save(messageValue);
 
+            System.out.println("after the messageValue" + messageValue);
+
+            //save in messageChats;
             EntityMessagesChat messagesChat = new EntityMessagesChat();
 
             messagesChat.setChatTableID(chatTable);
             messagesChat.setMessageID(messageValue);
             messagesChatRepository.save(messagesChat);
+
+            System.out.println("after the messageChat" + messagesChat);
+
             
             return "200 - message";
         } catch (Exception e) {

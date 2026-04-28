@@ -2,8 +2,10 @@
 
 export type ChatType = {
     id: number,
+    idUserMessage: number,
     profile_picture?: string,
-    name: string
+    message?: string,
+    name?: string
 }
 
 export type MessageType = {

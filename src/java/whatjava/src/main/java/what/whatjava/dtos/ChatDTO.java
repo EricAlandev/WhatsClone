@@ -11,6 +11,7 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatDTO {
     private Long id;
+    private Long idUserMessage;
     private String profilePicture;
     private String name;
     private String message;

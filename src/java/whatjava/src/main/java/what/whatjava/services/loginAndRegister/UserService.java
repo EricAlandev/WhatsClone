@@ -109,8 +109,8 @@ public class UserService {
             userFriendsRepository.save(entityUserFriend);
 
             //creating the friend & user
-            entityFriendUser.setFriendsId(userAddVerifyed);
-            entityFriendUser.setUserID(actualUserVerifyed);
+            entityFriendUser.setFriendsId(actualUserVerifyed);
+            entityFriendUser.setUserID(userAddVerifyed);
 
             userFriendsRepository.save(entityFriendUser);
 

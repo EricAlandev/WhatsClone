@@ -2,7 +2,7 @@ import Link from "next/link"
 
 
 type SkeListValue = {
-    type: "list" | "chat" |  "add"
+    type: "list" | "chat" |  "add" | "message"
 
     //list type
     idList?: number,
@@ -14,7 +14,12 @@ type SkeListValue = {
     idUser?: number,
     idLoggedUser?: number,
     name?: string,
-    descriptionUser?: string
+    descriptionUser?: string,
+
+
+    //message
+    message?: string,
+    messageFromLoggedUser?: boolean,
 
     //functions
     add: (id: number ) => void
@@ -33,6 +38,9 @@ export default function SkeListValue({
     name,
     descriptionUser,
 
+
+    message,
+    messageFromLoggedUser,
     add
 
 } : SkeListValue){
@@ -49,7 +57,9 @@ export default function SkeListValue({
     }
 
     return(
-        <>
+        <div
+            className="relative"
+        >
             {type === "list" && (
                 <Link
                     href={`/configurations/${nameURL}`}
@@ -88,6 +98,31 @@ export default function SkeListValue({
 
                 </Link>
             )}
+
+            {type === "message" && (
+                <Link
+                    href={`/chat/${idUser}`}
+                    className={` flex items-center max-w-[120px] rounded-md gap-4 mt-5 p-2 bg-[#A0A0A0] ${messageFromLoggedUser === true ? 
+                        "absolute right-0" 
+                            : 
+                        "absolute left-0"
+                    }
+                    `}
+                >
+                    <img
+                        src={image_url}
+                        className="max-w-[30px] max-h-[30px]"
+                    />
+
+                    <div
+                        className="text-[white]"
+                    >
+                        <p>{message}</p>
+                    </div>
+
+                </Link>
+            )}
+
 
             {type === "add" && (
                 <div
@@ -137,6 +172,6 @@ export default function SkeListValue({
 
                 </div>
             )}
-        </>
+        </div>
     )
 }

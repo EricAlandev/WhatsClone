@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
-import what.whatjava.dtos.SearchDTO;
-import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.services.ChatService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
