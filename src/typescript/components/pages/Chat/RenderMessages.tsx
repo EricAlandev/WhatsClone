@@ -15,7 +15,7 @@ export default function RenderMessages({chats, idOfLoggedUser}: RenderChat){
 
     return(
         <div
-            className="w-[90vw] h-[90vh] h-[90vh]  mx-auto overflow-y-auto"
+            className="w-[90vw] h-[90vh] h-[90vh]  mx-auto   overflow-y-auto pb-16"
         >
             <div
                 className="flex flex-col"

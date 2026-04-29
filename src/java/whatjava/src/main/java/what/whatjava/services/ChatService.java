@@ -183,9 +183,8 @@ public class ChatService {
 
                //visualize all of the messages
                for(int i =0; i < messagesChat.size(); i++){
-                System.out.println("inside of the for");
                     if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
-                        System.out.println("inside of the if");
+
                         messagesChat.get(i).getMessageID().setStatus("Visualized");
 
                         messagesChatRepository.save(messagesChat.get(i));
@@ -256,7 +255,6 @@ public class ChatService {
                 chatTable = chatTableFound.get();
             }
 
-            System.out.println("after the chatTable" + chatTableFound);
 
             //create message
             EntityMessage messageValue = new EntityMessage();
@@ -268,18 +266,13 @@ public class ChatService {
             messageValue.setTime(timeNow);
             messageRepository.save(messageValue);
 
-            System.out.println("after the messageValue" + messageValue);
-
             //save in messageChats;
             EntityMessagesChat messagesChat = new EntityMessagesChat();
 
             messagesChat.setChatTableID(chatTable);
             messagesChat.setMessageID(messageValue);
             messagesChatRepository.save(messagesChat);
-
-            System.out.println("after the messageChat" + messagesChat);
-
-            
+ 
             return "200 - message";
         } catch (Exception e) {
             return "fail in the process of send the message";
