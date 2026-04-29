@@ -1,5 +1,7 @@
 package what.whatjava.dtos;
 
+import java.sql.Timestamp;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
@@ -16,4 +18,6 @@ public class ChatDTO {
     private String name;
     private String message;
     private String status;
+    private String time;
+
 }

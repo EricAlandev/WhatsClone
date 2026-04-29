@@ -1,5 +1,6 @@
 package what.whatjava.services;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,9 @@ public class ChatService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private TimeService timeService;
 
     public List<ChatDTO> searchFriendsService(String search, String token){
 
@@ -165,6 +169,10 @@ public class ChatService {
         //message to return (can be fulled or not);
         List<ChatDTO> messagesToReturn = new ArrayList<>();
 
+        if(chatTable.isEmpty()){
+            chatTable = chatRepository.findByUser1AndUser2(otherUser , actualUser);
+        }
+        
         if(!chatTable.isEmpty()){
             EntityChatTable chatTableFound = chatTable.get();
 
@@ -191,6 +199,7 @@ public class ChatService {
                     .name(message.getMessageID().getUserID().getName())
                     .message(message.getMessageID().getMessage())
                     .status(message.getMessageID().getStatus())
+                    .time(timeService.TextConvert(message.getMessageID().getTime()))
                     .build()
                 ).toList();
             }
@@ -224,13 +233,23 @@ public class ChatService {
             Optional<EntityChatTable> chatTableFound = chatRepository.findByUser1AndUser2(actualUser, otherUser);
             EntityChatTable chatTable = new EntityChatTable();
 
+            //verify if didn't find
             if(chatTableFound.isEmpty()){
-                EntityChatTable newChatTable = new EntityChatTable();
+                chatTableFound = chatRepository.findByUser1AndUser2(otherUser, actualUser);
+
+                //if the inverted find, its empty again. Create;
+                if(chatTableFound.isEmpty()){
+                    EntityChatTable newChatTable = new EntityChatTable();
                 
-                newChatTable.setUser1(actualUser);
-                newChatTable.setUser2(otherUser);
-                chatRepository.save(newChatTable);
-                chatTable = newChatTable;
+                    newChatTable.setUser1(actualUser);
+                    newChatTable.setUser2(otherUser);
+                    chatRepository.save(newChatTable);
+                    chatTable = newChatTable;
+                }
+
+                else{
+                    chatTable = chatTableFound.get();
+                }
             }
 
             else{
@@ -241,10 +260,12 @@ public class ChatService {
 
             //create message
             EntityMessage messageValue = new EntityMessage();
+            Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
 
             messageValue.setMessage(message);
             messageValue.setStatus("not viewed");
             messageValue.setUserID(actualUser);
+            messageValue.setTime(timeNow);
             messageRepository.save(messageValue);
 
             System.out.println("after the messageValue" + messageValue);

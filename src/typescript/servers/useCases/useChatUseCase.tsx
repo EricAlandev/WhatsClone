@@ -12,7 +12,7 @@ export default function useChatUseCase(){
 
     const [originalChats, setOriginalChats] = useState<ChatType[] | []>([]);
     const [friendsFinded, setFriendsFinded] = useState<ChatType[] | []>([]);
-    const [messages, setMessages] = useState<MessageType[] | []>([]);
+    const [messages, setMessages] = useState<ChatType[] | []>([]);
 
     const SearchFriends = async(text: string, token: string) => {
         try{
@@ -45,7 +45,7 @@ export default function useChatUseCase(){
         try{
             if(token){
                 console.log("Inside of the call messages", token, id);
-                const resultSearch : MessageType[] = await callAllMessagesService(id, token);
+                const resultSearch : ChatType[] = await callAllMessagesService(id, token);
                 console.log("resultSearch", resultSearch);
                 setMessages(resultSearch);
             }
@@ -61,8 +61,8 @@ export default function useChatUseCase(){
             if(token){
                 console.log("Inside of the call messages", token, id);
                 const resultSearch : MessageType[] = await sendMessageService(id, token, message);
-                console.log("resultSearch", resultSearch);
                 setMessages(resultSearch);
+                callMessages(id, token);
             }
         }
 

@@ -19,6 +19,7 @@ type SkeListValue = {
 
     //message
     message?: string,
+    idMessage?: number,
     messageFromLoggedUser?: boolean,
 
     //functions
@@ -40,6 +41,7 @@ export default function SkeListValue({
 
 
     message,
+    idMessage,
     messageFromLoggedUser,
     add
 
@@ -55,6 +57,8 @@ export default function SkeListValue({
             nameURL = "account";
             break;
     }
+
+    console.log("Inside of ske", messageFromLoggedUser, idUser);
 
     return(
         <div
@@ -94,30 +98,6 @@ export default function SkeListValue({
                         className="text-[white]"
                     >
                         <p>{name}</p>
-                    </div>
-
-                </Link>
-            )}
-
-            {type === "message" && (
-                <Link
-                    href={`/chat/${idUser}`}
-                    className={` flex items-center max-w-[120px] rounded-md gap-4 mt-5 p-2 bg-[#A0A0A0] ${messageFromLoggedUser === true ? 
-                        "absolute right-0" 
-                            : 
-                        "absolute left-0"
-                    }
-                    `}
-                >
-                    <img
-                        src={image_url}
-                        className="max-w-[30px] max-h-[30px]"
-                    />
-
-                    <div
-                        className="text-[white]"
-                    >
-                        <p>{message}</p>
                     </div>
 
                 </Link>

@@ -1,4 +1,5 @@
 package what.whatjava.entitys.chats;
+import java.sql.Timestamp;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -27,6 +28,9 @@ public class EntityMessage {
 
     @Column
     private String status;
+
+    @Column
+    private Timestamp time;
 
     @OneToMany(mappedBy = "messageID", cascade = CascadeType.ALL)
     private List<EntityMessagesChat> messageChat;
