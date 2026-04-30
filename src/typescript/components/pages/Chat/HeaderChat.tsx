@@ -2,14 +2,14 @@ import Link from "next/link"
 
 type HeaderChatPage = {
     name?: string,
-
+    hiddenOrNot?: string
 }
 
-export default function HeaderChatPage({name} : HeaderChatPage){
+export default function HeaderChatPage({name, hiddenOrNot} : HeaderChatPage){
 
     return(
         <div
-            className="flex items-center justify-between h-[10vh] pb-2 pl-2 pr-5 bg-[#161717] border-b-[0.5px] border-[white]"
+            className={`flex items-center justify-between h-[10vh] pb-2 pl-2 pr-5 bg-[#161717] border-b-[0.5px] border-[white] ${hiddenOrNot}`}
         >
             <Link
                 href={"/homepage"}

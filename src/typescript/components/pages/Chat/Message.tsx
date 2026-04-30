@@ -1,13 +1,24 @@
+'use client'
+
 import { ChatType } from "@/typescript/types/ChatType";
+import { useState } from "react";
 
 type Message = ChatType &{
     //message
     message?: string,
     idMessage?: number,
     messageFromLoggedUser?: boolean
+
+
+    options: (onOrOf: boolean, idMessage: number) => void;
+    HeaderSelected: (set: any) => void;
+    selectedMessage: boolean
 }
 
-export default function SkeMessage({message, idMessage, messageFromLoggedUser, time,status } : Message){
+export default function SkeMessage({message, idMessage, messageFromLoggedUser, time,status, options, HeaderSelected, selectedMessage} : Message){
+
+    const [showImageOptions, setShowImageOptions] = useState<boolean>(false);
+    const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
     //define the logical of the image photo;
     let urlImage;
@@ -24,22 +35,39 @@ export default function SkeMessage({message, idMessage, messageFromLoggedUser, t
             break
     }
 
+    const handleTouchStart = () => {
+        // Start a timer for 500ms
+        const i = setTimeout(() => {
+            if(idMessage){
+                setShowImageOptions(true);
+                options(true, idMessage);
+            }
+        }, 500);
+        setTimer(i);
+    };
+    
+    const handleTouchEnd = () => {
+        // If they lift their finger before 500ms, cancel the timer
+        if (timer) clearTimeout(timer);
+    };
+
 
     return(
         <div
-            className={` flex items-center max-w-[150px] rounded-md gap-4 mt-5 p-2 bg-[#A0A0A0] ${messageFromLoggedUser === true ? 
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className={`relative flex items-center max-w-[150px] rounded-md gap-4 mt-5 p-2 bg-[#A0A0A0]
+            ${messageFromLoggedUser === true ? 
                 `self-end` 
                     : 
                 "self-start"//justify-between if for the chields
                             //self is for himself
             }
-            `}
+            ${(HeaderSelected !== "hidden" && messageFromLoggedUser === true && selectedMessage === true)  && "bg-[#F1F1F1]"} `}
         >
 
                 {/*Message and text */}
-                <div
-                    
-                >
+                <div>
                     <p
                         className="max-w-[130px] wrap-break-word"
                     >
@@ -60,8 +88,6 @@ export default function SkeMessage({message, idMessage, messageFromLoggedUser, t
                             className=" max-h-[22px] "
                         />
                     </div>
-
-
                 </div>
         </div>
     )

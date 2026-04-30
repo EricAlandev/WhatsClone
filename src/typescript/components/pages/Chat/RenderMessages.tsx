@@ -3,15 +3,17 @@
 import { ChatType } from "@/typescript/types/ChatType"
 import SkeListValue from "../../skeletons/SkeListValue";
 import SkeMessage from "./Message";
+import { useState } from "react";
 
 type RenderChat = {
     chats: ChatType[] | [],
-    idOfLoggedUser: number
+    idOfLoggedUser: number,
+    selectedIds: number[],
+    options: (turnedOn: boolean, idMessage: number) => void;
+    HeaderSelected: (set: any) => void;
 }
 
-export default function RenderMessages({chats, idOfLoggedUser}: RenderChat){
-
-    console.log(chats);
+export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSelected, selectedIds}: RenderChat){
 
     return(
         <div
@@ -21,7 +23,17 @@ export default function RenderMessages({chats, idOfLoggedUser}: RenderChat){
                 className="flex flex-col"
             >
                 {chats?.length > 0 &&(
-                    chats?.map((c, index) => {
+                    chats?.map((c) => {
+
+                        let selectedMessage: boolean = false;
+
+                        //verify if the message is selected
+                        for(let i = 0; i < selectedIds?.length; i++){
+                            if(c?.id === selectedIds[i]){
+                                selectedMessage = true;
+                            }
+                        }
+
                         //message from user or not
                         let messageFromUser = false
                         if(idOfLoggedUser === c?.idUserMessage){
@@ -36,6 +48,14 @@ export default function RenderMessages({chats, idOfLoggedUser}: RenderChat){
                             time={c?.time}
                             messageFromLoggedUser={messageFromUser}
                             status={c?.status}
+                            options={(onOrOf, idMessage) => {
+                                if(idMessage){
+                                    options(onOrOf, idMessage);
+                                }
+                                
+                            }}
+                            HeaderSelected={HeaderSelected}
+                            selectedMessage={selectedMessage}
                         />
                         )
                     })
