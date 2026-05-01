@@ -24,6 +24,9 @@ export default function SendMessage({send} : SendMessage){
                 onSubmit={(e) => {
                     e.preventDefault();
                     send(message);
+
+                    //clear the old text
+                    setMessage({text: ""});
                 }}
                 className="flex w-[90vw] h-[5vh] bg-[#2E2F2F] rounded-[15px]"
             >
@@ -32,7 +35,7 @@ export default function SendMessage({send} : SendMessage){
                     value={message?.text}
                     onChange={handleChanger}
                     placeholder="Message"
-                    className="w-[90vw]  pl-15 placeholder:text-[white] rounded-[15px] placeholder:font-medium placeholder:text-[#18191b]"
+                    className="w-[90vw]  pl-15 placeholder:text-[white] rounded-[15px] placeholder:font-medium placeholder:text-[#18191b] text-[white]"
                 />
             </form>
         </div>
