@@ -76,4 +76,18 @@ public class ChatController {
         
         return callService;
     }
+
+    @DeleteMapping("/messages/ids")
+    public String sendMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token) {
+
+    String cleanToken = (token.startsWith("Bearer ") 
+            ? token.substring(7) : token
+    );
+
+    String callService = chatService.deleteMessages(ids , cleanToken);
+
+    System.out.println("value comming to front-end " + callService);
+    
+    return callService;
+}
 }

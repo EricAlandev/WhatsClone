@@ -1,10 +1,11 @@
 
 type HeaderSelectedChat = {
-    hiddenOrNot?: string
-    back: () => void
+    hiddenOrNot?: string;
+    back: () => void;
+    deleteMessages: (value: void) => void;
 }
 
-export default function HeaderSelectedChat({hiddenOrNot, back} : HeaderSelectedChat){
+export default function HeaderSelectedChat({hiddenOrNot, back, deleteMessages} : HeaderSelectedChat){
 
     return(
         <div
@@ -22,6 +23,9 @@ export default function HeaderSelectedChat({hiddenOrNot, back} : HeaderSelectedC
 
             <img
                 src={"/messages/trash.png"}
+                onClick={() => {
+                    deleteMessages()
+                }}
                 className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
             />
         </div>

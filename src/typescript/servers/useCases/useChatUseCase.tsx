@@ -5,7 +5,7 @@ import { callAllChatsService, searchFriendsService } from "../services/ServiceSe
 import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType } from "@/typescript/types/ChatType";
-import { callAllMessagesService, sendMessageService } from "../services/ServiceChat";
+import { callAllMessagesService, deleteMessageService, sendMessageService } from "../services/ServiceChat";
 
 
 export default function useChatUseCase(){
@@ -59,10 +59,21 @@ export default function useChatUseCase(){
     const sendMessage = async(id: string, token: string, message: string) => {
         try{
             if(token){
-                console.log("Inside of the call messages", token, id);
-                const resultSearch : MessageType[] = await sendMessageService(id, token, message);
-                setMessages(resultSearch);
+                const resultSearch : string = await sendMessageService(id, token, message);
                 callMessages(id, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+    const deleteMessage = async(ids: number[], token: string, idChat: string) => {
+        try{
+            if(token){
+                const resultSearch : string = await deleteMessageService(ids, token);
+                callMessages(idChat, token);
             }
         }
 
@@ -77,6 +88,7 @@ export default function useChatUseCase(){
         callAllChats, 
         callMessages,
         messages,
-        sendMessage
+        sendMessage,
+        deleteMessage
     }
 }

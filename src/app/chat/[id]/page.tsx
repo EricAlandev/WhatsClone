@@ -1,6 +1,7 @@
 'use client'
 
 import AuthorizationComponent from "@/typescript/components/authorizations/AuthorizationComponent";
+import DeletePopuP from "@/typescript/components/pages/Chat/DeletePopUp";
 import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
@@ -12,20 +13,21 @@ import { useEffect, useState } from "react";
 
 export default function ChatPage(){
     
-    const [header, setHeader] = useState<string>();
-    
     //define what type of header
     // Options
     // Header -> normal header
     // HeaderSelect -> header for when some message is selected;
+    const [header, setHeader] = useState<string>();
     const [headerSelected, setHeaderSelected] = useState<string>("hidden");
 
     //array with the selectedIds
     const [selectedId, setSelectedIds] = useState<number[]>([]);
 
+    const [isModalDelete, setIsModalDelete] = useState<boolean>(false);
+
     const {id} = useParams();
 
-    const {callMessages, sendMessage, messages} = useChatUseCase();
+    const {callMessages, sendMessage, deleteMessage, messages} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -39,16 +41,21 @@ export default function ChatPage(){
             className="flex flex-col pb-2 bg-[#161717]"
         >
             <AuthorizationComponent>
+                {/*Normal header */}
                 <HeaderChatPage
                     hiddenOrNot={header}
                 />
+
+                {/*Header when at least one message is selected */}
                 <HeaderSelectedChat
                     hiddenOrNot={headerSelected}
                     back={() => {
                         setHeader("");
                         setHeaderSelected("hidden");
                         setSelectedIds([]);
-                        arraySelectedID = [];
+                    }}
+                    deleteMessages={() => {
+                        setIsModalDelete(true);
                     }}
                 />
 
@@ -56,6 +63,7 @@ export default function ChatPage(){
                     idOfLoggedUser={user?.id}
                     chats={messages}
                     options={(onOrOf, idMessage) => {
+                        //define if the header is selected and wish is chosed;
                         if(onOrOf === true){
                             setHeader("hidden");
                             setHeaderSelected("");
@@ -78,6 +86,20 @@ export default function ChatPage(){
                        }
                     }}
 
+                />
+
+
+                {/*POPUPS */}
+                <DeletePopuP
+                    open={isModalDelete}
+                    setIsModalDelete={setIsModalDelete}
+                    deleteMessage={() => {
+                        if(token){
+                            deleteMessage(selectedId, token, id);
+                            setIsModalDelete(false);
+                            setSelectedIds([]);
+                        }
+                    }}
                 />
             </AuthorizationComponent>
         </div>

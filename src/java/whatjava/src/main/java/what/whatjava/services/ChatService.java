@@ -279,4 +279,24 @@ public class ChatService {
         }
         
     } 
+
+    @Transactional
+    public String deleteMessages(List<Number> ids, String token){
+        Claims claims = jwtService.verifyToken(token);
+        Long idUser = claims.get("id", Long.class);
+
+        //verify if user exists;
+        userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("user dosn't exist"));
+
+        //find and delete the messages
+        for(int i = 0; i < ids.size(); i++){
+            Number actualId = ids.get(i);
+
+            EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
+
+            messageRepository.delete(message);
+        }
+
+        return "Messages deleted with sucess!";
+    }
 }

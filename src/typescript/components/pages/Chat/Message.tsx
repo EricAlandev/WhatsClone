@@ -8,16 +8,19 @@ type Message = ChatType &{
     message?: string,
     idMessage?: number,
     messageFromLoggedUser?: boolean
-
+    selectedMessage: boolean
 
     options: (onOrOf: boolean, idMessage: number) => void;
     HeaderSelected: (set: any) => void;
-    selectedMessage: boolean
+    
 }
 
-export default function SkeMessage({message, idMessage, messageFromLoggedUser, time,status, options, HeaderSelected, selectedMessage} : Message){
+export default function SkeMessage({
+    message, idMessage, messageFromLoggedUser, time,status,selectedMessage , 
+    
+    options, HeaderSelected
+} : Message){
 
-    const [showImageOptions, setShowImageOptions] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
     //define the logical of the image photo;
@@ -39,7 +42,6 @@ export default function SkeMessage({message, idMessage, messageFromLoggedUser, t
         // Start a timer for 500ms
         const i = setTimeout(() => {
             if(idMessage){
-                setShowImageOptions(true);
                 options(true, idMessage);
             }
         }, 500);

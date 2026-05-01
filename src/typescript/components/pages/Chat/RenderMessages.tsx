@@ -1,16 +1,14 @@
 'use client'
 
 import { ChatType } from "@/typescript/types/ChatType"
-import SkeListValue from "../../skeletons/SkeListValue";
 import SkeMessage from "./Message";
-import { useState } from "react";
 
 type RenderChat = {
     chats: ChatType[] | [],
     idOfLoggedUser: number,
     selectedIds: number[],
     options: (turnedOn: boolean, idMessage: number) => void;
-    HeaderSelected: (set: any) => void;
+    HeaderSelected: string;
 }
 
 export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSelected, selectedIds}: RenderChat){
@@ -24,21 +22,12 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
             >
                 {chats?.length > 0 &&(
                     chats?.map((c) => {
-
-                        let selectedMessage: boolean = false;
-
+                        
                         //verify if the message is selected
-                        for(let i = 0; i < selectedIds?.length; i++){
-                            if(c?.id === selectedIds[i]){
-                                selectedMessage = true;
-                            }
-                        }
+                        let selectedMessage: boolean = selectedIds.includes(c?.id);
 
                         //message from user or not
-                        let messageFromUser = false
-                        if(idOfLoggedUser === c?.idUserMessage){
-                            messageFromUser = true         
-                        }
+                        const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false     
                         
                         return(
                             <SkeMessage
