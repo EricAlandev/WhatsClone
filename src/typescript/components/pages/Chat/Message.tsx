@@ -2,6 +2,7 @@
 
 import { ChatType } from "@/typescript/types/ChatType";
 import { useState } from "react";
+import ImageStatusMessage from "../../skeletons/ImageStatusMessage";
 
 type Message = ChatType &{
     //message
@@ -17,31 +18,16 @@ type Message = ChatType &{
 }
 
 export default function SkeMessage({
-    message, idMessage, messageFromLoggedUser, time,status,selectedMessage , edited,
+    message, idMessage, messageFromLoggedUser, time, status,selectedMessage , edited,
     
     options, HeaderSelected
 } : Message){
 
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
-    //define the logical of the image photo;
-    let urlImage;
-    switch(status){
-        case"Visualized":
-            urlImage = "/messages/Visualized.png"
-            break
-
-        case "not viewed":
-            urlImage = "/messages/NonVisualized.png"
-            break
-
-        default:
-            break
-    }
-
     const handleTouchStart = () => {
-        //Only let press if was not selected yet
-        if(selectedMessage === false){
+        //Only let press if was not selected yet and if the message is yours
+        if(selectedMessage === false && messageFromLoggedUser === true){
             const i = setTimeout(() => {
                 if(idMessage){
                     options(true, idMessage);
@@ -95,9 +81,8 @@ export default function SkeMessage({
                             {time}
                         </p>
 
-                        <img
-                            src={urlImage}
-                            className=" max-h-[22px] "
+                        <ImageStatusMessage
+                            status={status}
                         />
                     </div>
                 </div>

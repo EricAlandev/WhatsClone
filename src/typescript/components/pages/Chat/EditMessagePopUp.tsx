@@ -1,17 +1,20 @@
 
 'use client'
 
-import { MessageType } from "@/typescript/types/ChatType"
+import { MessageType, selectedIds } from "@/typescript/types/ChatType"
 import { useSearchParams } from "next/navigation"
 import React, { useState } from "react"
+import ImageStatusMessage from "../../skeletons/ImageStatusMessage"
 
 type EditMessagePopUp = {
     open: boolean
     setIsModalEdit:  any,
+    selectedIds: selectedIds[],
+
     edit: (text: string) => void
 }
 
-export default function EditMessagePopUp({open, setIsModalEdit, edit} : EditMessagePopUp){
+export default function EditMessagePopUp({open, setIsModalEdit,selectedIds, edit} : EditMessagePopUp){
 
     const [message, setMessage] = useState<MessageType>({text: ""});
 
@@ -26,6 +29,9 @@ export default function EditMessagePopUp({open, setIsModalEdit, edit} : EditMess
 
     if(!open) return null;
 
+    //The selectedIds just gonna have 1 array with the data of the actual message. So its okay to pick the value 0;
+    const selectedMessageValues = selectedIds[0];
+
     return(
         <>
             <div 
@@ -35,7 +41,7 @@ export default function EditMessagePopUp({open, setIsModalEdit, edit} : EditMess
                 className="fixed inset-0 bg-[black] opacity-70"
             ></div>
 
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] h-[50vh] max-h-[360px] bg-[white] rounded-md">
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] h-[50vh] max-h-[250px] bg-[white] rounded-md">
                 
                 {/*Header popUp */}
                 <header
@@ -55,8 +61,25 @@ export default function EditMessagePopUp({open, setIsModalEdit, edit} : EditMess
 
                 {/*Body popUp */}
                 <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                    className="relative h-full bg-[#2B2D2D]"
                 >
+                    {/*Message data */}
+                    <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col max-w-[150px] rounded-md p-2 bg-[#144D37] text-[#F1F1F1]"
+                    >
+                        <p>{selectedMessageValues?.message}</p>
+                        
+                        <div
+                            className="flex items-center gap-2"
+                        >
+                            <p className="text-[13.5px]">{selectedMessageValues?.time}</p>
+
+                            <ImageStatusMessage
+                                status={selectedMessageValues.status}
+                            />
+                        </div>
+
+                    </div>
                 </div>
                 
                 {/*Footer popUp */}
@@ -68,7 +91,7 @@ export default function EditMessagePopUp({open, setIsModalEdit, edit} : EditMess
                             {text : ""}
                         ))
                     }}
-                    className="absolute bottom-0 w-full h-[60px] bg-[#161717]"
+                    className="relative w-full h-[60px] bg-[#161717]"
                 >
                     <input
                         name="text"

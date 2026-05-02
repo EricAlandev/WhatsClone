@@ -1,3 +1,5 @@
+import { selectedIds } from "@/typescript/types/ChatType";
+
 export const callAllMessagesService = async(id:string, token: string,) => {
     try{
         console.log("Inside of call service", id, token);
@@ -49,9 +51,9 @@ export const sendMessageService = async(id:string, token: string,  message: any)
     }
 }
 
-export const deleteMessageService = async(ids: number[], token: string) => {
+export const deleteMessageService = async(ids: selectedIds[], token: string) => {
     try{
-        const queryParams = ids.map(id => `id=${id}`).join('&');
+        const queryParams = ids.map(id => `id=${id?.id}`).join('&');
 
         const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/ids?${queryParams}`, {
             method: "DELETE",
@@ -75,9 +77,9 @@ export const deleteMessageService = async(ids: number[], token: string) => {
     }
 }
 
-export const alterMessageService = async(ids: number[], token: string, message: string) => {
+export const alterMessageService = async(ids: selectedIds[], token: string, message: string) => {
     try{
-        const queryParams = ids.map(id => `id=${id}`).join('&');
+        const queryParams = ids.map(id => `id=${id?.id}`).join('&');
 
         const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/ids?${queryParams}`, {
             method: "PUT",

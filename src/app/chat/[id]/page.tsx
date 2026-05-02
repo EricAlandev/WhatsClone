@@ -9,6 +9,7 @@ import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
 import SendMessage from "@/typescript/components/pages/Chat/SendMessage";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
+import { selectedIds } from "@/typescript/types/ChatType";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,7 +23,7 @@ export default function ChatPage(){
     const [headerSelected, setHeaderSelected] = useState<string>("hidden");
 
     //array with the selectedIds
-    const [selectedId, setSelectedIds] = useState<number[]>([]);
+    const [selectedId, setSelectedIds] = useState<selectedIds[]>([]);
 
     const [isModalDelete, setIsModalDelete] = useState<boolean>(false);
     const [isModalEdit, setIsModalEdit] = useState<boolean>(false);
@@ -69,13 +70,14 @@ export default function ChatPage(){
                 <RenderMessages
                     idOfLoggedUser={user?.id}
                     chats={messages}
-                    options={(onOrOf, idMessage) => {
+                    options={(onOrOf, idMessage, message, time , status) => {
                         //define if the header is selected and wish is chosed;
                         if(onOrOf === true){
                             setHeader("hidden");
                             setHeaderSelected("");
                             
-                            setSelectedIds(prev => [...prev, idMessage]);
+                            //pass the id,message, time from message
+                            setSelectedIds(prev => [...prev, {id: idMessage, message: message, time: time, status: status}]);
                         }
                         else{
                             setHeader("");
@@ -116,6 +118,7 @@ export default function ChatPage(){
                 <EditMessagePopUp
                     open={isModalEdit}
                     setIsModalEdit={setIsModalEdit}
+                    selectedIds={selectedId}
                     edit={(message) => {
                         if(token){
                             changeMessage(selectedId, token, id, message)

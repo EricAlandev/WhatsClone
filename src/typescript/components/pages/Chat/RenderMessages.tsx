@@ -1,13 +1,13 @@
 'use client'
 
-import { ChatType } from "@/typescript/types/ChatType"
+import { ChatType, selectedIds } from "@/typescript/types/ChatType"
 import SkeMessage from "./Message";
 
 type RenderChat = {
     chats: ChatType[] | [],
     idOfLoggedUser: number,
-    selectedIds: number[],
-    options: (turnedOn: boolean, idMessage: number) => void;
+    selectedIds: selectedIds[],
+    options: (turnedOn: boolean, idMessage: number, message: string, time: string, status: string) => void;
     HeaderSelected: string;
 }
 
@@ -24,7 +24,13 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                     chats?.map((c) => {
                         
                         //verify if the message is selected
-                        let selectedMessage: boolean = selectedIds.includes(c?.id);
+                        let selectedMessage: boolean = false;
+
+                        for(let i = 0; i < selectedIds.length; i++){
+                            if(c?.id === selectedIds[i].id){
+                                selectedMessage = true
+                            }
+                        }
 
                         //message from user or not
                         const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false     
@@ -39,8 +45,9 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                             status={c?.status}
                             edited={c?.edited}
                             options={(onOrOf, idMessage) => {
-                                if(idMessage){
-                                    options(onOrOf, idMessage);
+                                if(idMessage && c?.message && c?.time && c?.status){
+                                    //send the state of selected,   idMessage, message, time, status
+                                    options(onOrOf, idMessage, c?.message, c?.time, c?.status);
                                 }
                                 
                             }}

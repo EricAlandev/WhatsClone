@@ -15,3 +15,10 @@ export type MessageType = {
    text: string,
    profilePicture?: string
 }
+
+export type selectedIds = {
+    id: number,
+    message:string,
+    time: string,
+    status: string
+}
