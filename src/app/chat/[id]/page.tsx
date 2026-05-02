@@ -2,6 +2,7 @@
 
 import AuthorizationComponent from "@/typescript/components/authorizations/AuthorizationComponent";
 import DeletePopuP from "@/typescript/components/pages/Chat/DeletePopUp";
+import EditMessagePopUp from "@/typescript/components/pages/Chat/EditMessagePopUp";
 import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
@@ -24,10 +25,12 @@ export default function ChatPage(){
     const [selectedId, setSelectedIds] = useState<number[]>([]);
 
     const [isModalDelete, setIsModalDelete] = useState<boolean>(false);
+    const [isModalEdit, setIsModalEdit] = useState<boolean>(false);
 
     const {id} = useParams();
 
-    const {callMessages, sendMessage, deleteMessage, messages} = useChatUseCase();
+    //database calls
+    const {callMessages, sendMessage, deleteMessage,changeMessage, messages} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -56,6 +59,10 @@ export default function ChatPage(){
                     }}
                     deleteMessages={() => {
                         setIsModalDelete(true);
+                    }}
+                    quantityMessages={selectedId}
+                    edit={() => {
+                        setIsModalEdit(true);
                     }}
                 />
 
@@ -98,6 +105,26 @@ export default function ChatPage(){
                             deleteMessage(selectedId, token, id);
                             setIsModalDelete(false);
                             setSelectedIds([]);
+
+                            //set the header to the normal
+                            setHeader("");
+                            setHeaderSelected("hidden");
+                        }
+                    }}
+                />
+
+                <EditMessagePopUp
+                    open={isModalEdit}
+                    setIsModalEdit={setIsModalEdit}
+                    edit={(message) => {
+                        if(token){
+                            changeMessage(selectedId, token, id, message)
+                            setIsModalEdit(false)
+                            setSelectedIds([]);
+
+                            //set the header to the normal
+                            setHeader("");
+                            setHeaderSelected("hidden");
                         }
                     }}
                 />

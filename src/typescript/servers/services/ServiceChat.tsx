@@ -74,3 +74,32 @@ export const deleteMessageService = async(ids: number[], token: string) => {
 
     }
 }
+
+export const alterMessageService = async(ids: number[], token: string, message: string) => {
+    try{
+        const queryParams = ids.map(id => `id=${id}`).join('&');
+
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/ids?${queryParams}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}

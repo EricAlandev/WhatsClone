@@ -198,6 +198,7 @@ public class ChatService {
                     .name(message.getMessageID().getUserID().getName())
                     .message(message.getMessageID().getMessage())
                     .status(message.getMessageID().getStatus())
+                    .edited(message.getMessageID().isEdited())//for primitive values like boolean. I need to use is
                     .time(timeService.TextConvert(message.getMessageID().getTime()))
                     .build()
                 ).toList();
@@ -264,6 +265,7 @@ public class ChatService {
             messageValue.setStatus("not viewed");
             messageValue.setUserID(actualUser);
             messageValue.setTime(timeNow);
+            messageValue.setEdited(false);
             messageRepository.save(messageValue);
 
             //save in messageChats;
@@ -279,6 +281,28 @@ public class ChatService {
         }
         
     } 
+    @Transactional
+    public String alterMessage(List<Number> ids, String token, String message){
+        Claims claim = jwtService.verifyToken(token);
+        Long id = claim.get("id", Long.class);
+
+        userRepository.findById(id).orElseThrow(() -> new RuntimeException("User dosn't exist"));
+
+        Number idMessage = ids.get(0);
+
+        EntityMessage messageDB = messageRepository.findById(idMessage).orElseThrow(() -> new RuntimeException("message dosn't exist"));
+
+        messageDB.setMessage(message);
+        messageDB.setEdited(true);
+
+        Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
+
+        messageDB.setTime(now);
+        messageRepository.save(messageDB);
+
+        return  "";
+    }
+
 
     @Transactional
     public String deleteMessages(List<Number> ids, String token){
@@ -299,4 +323,5 @@ public class ChatService {
 
         return "Messages deleted with sucess!";
     }
+
 }

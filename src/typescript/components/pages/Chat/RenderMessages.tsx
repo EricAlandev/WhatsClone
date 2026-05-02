@@ -37,6 +37,7 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                             time={c?.time}
                             messageFromLoggedUser={messageFromUser}
                             status={c?.status}
+                            edited={c?.edited}
                             options={(onOrOf, idMessage) => {
                                 if(idMessage){
                                     options(onOrOf, idMessage);

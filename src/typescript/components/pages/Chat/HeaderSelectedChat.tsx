@@ -1,11 +1,15 @@
 
 type HeaderSelectedChat = {
     hiddenOrNot?: string;
+    quantityMessages?: number[];
     back: () => void;
+    edit: () => void;
     deleteMessages: (value: void) => void;
 }
 
-export default function HeaderSelectedChat({hiddenOrNot, back, deleteMessages} : HeaderSelectedChat){
+export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back, deleteMessages, edit} : HeaderSelectedChat){
+
+    const moreThanOneMessage : boolean = (quantityMessages?.length > 1) ? true : false
 
     return(
         <div
@@ -21,13 +25,29 @@ export default function HeaderSelectedChat({hiddenOrNot, back, deleteMessages} :
             />
 
 
-            <img
-                src={"/messages/trash.png"}
-                onClick={() => {
-                    deleteMessages()
-                }}
-                className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
-            />
+            <div
+                className="flex"
+            >
+                <img
+                    src={"/messages/trash.png"}
+                    onClick={() => {
+                        deleteMessages()
+                    }}
+                    className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
+                />
+
+                {moreThanOneMessage === false && (
+                    <>
+                        <img
+                            src={"/messages/change.png"}
+                            onClick={() => {
+                                edit()
+                            }}
+                            className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
+                        />
+                    </>
+                )}
+            </div>
         </div>
     )
 }

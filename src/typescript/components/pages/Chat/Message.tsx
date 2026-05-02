@@ -8,15 +8,16 @@ type Message = ChatType &{
     message?: string,
     idMessage?: number,
     messageFromLoggedUser?: boolean
-    selectedMessage: boolean
+    selectedMessage: boolean,
+    edited: boolean
 
     options: (onOrOf: boolean, idMessage: number) => void;
-    HeaderSelected: (set: any) => void;
+    HeaderSelected: string;
     
 }
 
 export default function SkeMessage({
-    message, idMessage, messageFromLoggedUser, time,status,selectedMessage , 
+    message, idMessage, messageFromLoggedUser, time,status,selectedMessage , edited,
     
     options, HeaderSelected
 } : Message){
@@ -39,13 +40,15 @@ export default function SkeMessage({
     }
 
     const handleTouchStart = () => {
-        // Start a timer for 500ms
-        const i = setTimeout(() => {
-            if(idMessage){
-                options(true, idMessage);
-            }
-        }, 500);
-        setTimer(i);
+        //Only let press if was not selected yet
+        if(selectedMessage === false){
+            const i = setTimeout(() => {
+                if(idMessage){
+                    options(true, idMessage);
+                }
+            }, 500);
+            setTimer(i);
+        }
     };
     
     const handleTouchEnd = () => {
@@ -75,12 +78,19 @@ export default function SkeMessage({
                     >
                         {message}
                     </p>
-                    
 
                     {/*Footer part of the messsage */}
                     <div
                         className="flex items-center gap-1.5"
                     >
+                        {edited === true && (
+                            <p
+                                className="text-[14px] border-b-[0.5px]"
+                            >
+                                edited
+                            </p>
+                        )}
+
                         <p className="text-[12px]">
                             {time}
                         </p>

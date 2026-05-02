@@ -58,9 +58,6 @@ export default function DeletePopuP({open, setIsModalDelete, deleteMessage} : De
                         </button>
                     </div>
                 </div>
-                
-
-            
             </div>
         </>
     )

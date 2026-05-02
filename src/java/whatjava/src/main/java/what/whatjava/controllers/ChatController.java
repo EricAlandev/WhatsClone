@@ -77,6 +77,21 @@ public class ChatController {
         return callService;
     }
 
+    @PutMapping("/messages/ids")
+    public String editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message) {
+
+    String cleanToken = (token.startsWith("Bearer ") 
+            ? token.substring(7) : token
+    );
+
+    String callService = chatService.alterMessage(ids , cleanToken, message.getMessage());
+
+    System.out.println("value comming to front-end " + callService);
+    
+    return callService;
+    }
+    
+
     @DeleteMapping("/messages/ids")
     public String sendMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token) {
 

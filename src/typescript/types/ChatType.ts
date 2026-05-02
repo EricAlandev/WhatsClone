@@ -8,6 +8,7 @@ export type ChatType = {
     name?: string
     time?: string
     status?: string
+    edited?: boolean
 }
 
 export type MessageType = {

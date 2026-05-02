@@ -32,6 +32,9 @@ public class EntityMessage {
     @Column
     private Timestamp time;
 
+    @Column
+    private boolean edited;
+
     @OneToMany(mappedBy = "messageID", cascade = CascadeType.ALL)
     private List<EntityMessagesChat> messageChat;
 
