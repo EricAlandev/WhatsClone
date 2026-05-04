@@ -16,7 +16,7 @@ export default function RenderChats({chats}: RenderChat){
             {chats?.length > 0 ?(
                 chats?.map((c) => (
                     <ChatSke
-                        idUser={c?.idUserMessage}
+                        idUser={c?.id}
                         name={c?.name}
                         message={c?.lastMessage?.message}
                         status={c?.lastMessage?.status}

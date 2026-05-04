@@ -97,7 +97,6 @@ export default function ChatPage(){
 
                 />
 
-
                 {/*POPUPS */}
                 <DeletePopuP
                     open={isModalDelete}

@@ -2,6 +2,7 @@
 
 import { ChatType, selectedIds } from "@/typescript/types/ChatType"
 import SkeMessage from "./Message";
+import { useEffect, useRef } from "react";
 
 type RenderChat = {
     chats: ChatType[] | [],
@@ -13,8 +14,18 @@ type RenderChat = {
 
 export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSelected, selectedIds}: RenderChat){
 
+    //pick the div and set the scroll to be in the last message
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+    }, [chats]); 
+
     return(
         <div
+            ref={scrollRef}
             className="w-[90vw] h-[90vh] h-[90vh]  mx-auto   overflow-y-auto pb-16"
         >
             <div
@@ -44,6 +55,9 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                             messageFromLoggedUser={messageFromUser}
                             status={c?.status}
                             edited={c?.edited}
+                            HeaderSelected={HeaderSelected}
+                            selectedMessage={selectedMessage}
+
                             options={(onOrOf, idMessage) => {
                                 if(idMessage && c?.message && c?.time && c?.status){
                                     //send the state of selected,   idMessage, message, time, status
@@ -51,8 +65,6 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                                 }
                                 
                             }}
-                            HeaderSelected={HeaderSelected}
-                            selectedMessage={selectedMessage}
                         />
                         )
                     })

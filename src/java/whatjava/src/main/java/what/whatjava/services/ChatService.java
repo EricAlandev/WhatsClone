@@ -9,6 +9,9 @@ import javax.management.RuntimeErrorException;
 
 import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Pageable;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -28,7 +31,6 @@ import what.whatjava.repository.MessageRepository;
 import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
-
 
 @Service
 public class ChatService {
@@ -166,7 +168,7 @@ public class ChatService {
         EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("Other user dosn't exist"));
 
         //verify if they are friends;
-        EntityUserFriend friends = userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
+        userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
 
         Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser);
 
@@ -180,7 +182,10 @@ public class ChatService {
         if(!chatTable.isEmpty()){
             EntityChatTable chatTableFound = chatTable.get();
 
-            List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound);
+            //define the newest values
+            org.springframework.data.domain.Pageable pageable = PageRequest.of(0, 8, org.springframework.data.domain.Sort.by("id").descending());
+
+            List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound, pageable);
 
             //clean the messages and return
             if(messagesChat.size() > 0){    
