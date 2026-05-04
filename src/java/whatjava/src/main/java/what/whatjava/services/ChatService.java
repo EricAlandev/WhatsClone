@@ -15,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
+import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.dtos.UserResponseDTO.message;
 import what.whatjava.dtos.UserResponseDTO.user_1;
 import what.whatjava.entitys.chats.EntityChatTable;
@@ -122,34 +123,37 @@ public class ChatService {
         Claims claims = jwtService.verifyToken(token);
         Long idUser = claims.get("id", Long.class);
 
-        Optional<EntityUser> notVerifyedUser = userRepository.findById(idUser);
-
-        if(notVerifyedUser == null || notVerifyedUser.isEmpty()){
-            throw new RuntimeException("User dosn't exist");
-        }
-
-        EntityUser verifyedUser = notVerifyedUser.get();
+        EntityUser user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User dosn't exist"));
 
         //Gonna pick the table chat_table(Prop of user_1 and user_2);
-  
-        List<EntityChatTable> user_1 = chatRepository.findByUser1(verifyedUser);
+        return chatRepository.findByUser1OrUser2(user, user).stream().map(chat -> defineUserToDTO(chat, user)).toList();
 
-        if(user_1.size() == 0){
-            List<ChatDTO> chatsReturnEmpty = new ArrayList<>();
-            return chatsReturnEmpty;
-        } 
-
-        return user_1.stream()
-            .<ChatDTO>map(friend -> ChatDTO.builder()
-            .id(friend.getUser1().getId())
-            .name(friend.getUser1().getName())
-            .build()
-            ).toList();
-    
     }
 
+    private ChatDTO defineUserToDTO(EntityChatTable chat, EntityUser user){
+
+        EntityUser otherUser = chat.getUser1().equals(user) ? chat.getUser2() : chat.getUser1();
+
+        //pick the last message to the user;
+        MessageDTO lastMessage = new MessageDTO();
+        for(int i = 0; i < chat.getMessageChat().size(); i++){
+            if(i + 1 == chat.getMessageChat().size()){
+                lastMessage.setMessage(chat.getMessageChat().get(i).getMessageID().getMessage());
+                lastMessage.setStatus(chat.getMessageChat().get(i).getMessageID().getStatus());
+                lastMessage.setTime(timeService.TextConvert(chat.getMessageChat().get(i).getMessageID().getTime())); 
+            }   
+        }
+
+        return ChatDTO.builder()
+            .id(otherUser.getId())
+            .name(otherUser.getName())
+            .lastMessage(lastMessage)
+            .build();
+    }
+
+
     //FindMessages
-    public List<ChatDTO> findMessages(String id, String cleanToken){
+    public List<MessageDTO> findMessages(String id, String cleanToken){
 
         Claims claims= jwtService.verifyToken(cleanToken);
         Long idLoggedUser = claims.get("id", Long.class);
@@ -167,7 +171,7 @@ public class ChatService {
         Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser);
 
         //message to return (can be fulled or not);
-        List<ChatDTO> messagesToReturn = new ArrayList<>();
+        List<MessageDTO> messagesToReturn = new ArrayList<>();
 
         if(chatTable.isEmpty()){
             chatTable = chatRepository.findByUser1AndUser2(otherUser , actualUser);
@@ -192,7 +196,7 @@ public class ChatService {
                }
                
                return messagesChat.stream()
-                .<ChatDTO>map(message -> ChatDTO.builder()
+                .<MessageDTO>map(message -> MessageDTO.builder()
                     .id(message.getId())
                     .idUserMessage(message.getMessageID().getUserID().getId())
                     .name(message.getMessageID().getUserID().getName())

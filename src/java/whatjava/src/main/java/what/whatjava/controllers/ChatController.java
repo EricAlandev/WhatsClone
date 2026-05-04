@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
+import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.services.ChatService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,9 +27,11 @@ public class ChatController {
                 ? token.substring(7) : token
         );
 
+        System.out.println("Token value:" + cleanToken);
+
         List<ChatDTO> callService = chatService.findAllChats(cleanToken);
 
-        System.out.println("value comming to front-end pull" + callService);
+        System.out.println("value comming to front-end pull findChats" + callService);
         
         return callService;
         }
@@ -48,13 +51,13 @@ public class ChatController {
     }
 
         @GetMapping("/messages/{id}")
-        public List<ChatDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token) {
+        public List<MessageDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
         );
 
-        List<ChatDTO> callService = chatService.findMessages(id , cleanToken);
+        List<MessageDTO> callService = chatService.findMessages(id , cleanToken);
 
         System.out.println("value comming to front-end " + callService);
         

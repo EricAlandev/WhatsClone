@@ -1,4 +1,5 @@
 import Link from "next/link"
+import ImageStatusMessage from "./ImageStatusMessage";
 
 
 type SkeListValue = {
@@ -19,6 +20,8 @@ type SkeListValue = {
 
     //message
     message?: string,
+    status?: string,
+    time?: string,
     idMessage?: number,
     messageFromLoggedUser?: boolean,
 
@@ -29,22 +32,9 @@ type SkeListValue = {
 
 export default function SkeListValue({
     type,
-    idList,
     image_url,
     nameList,
-    description,
-
-    idUser,
-    idLoggedUser,
-    name,
-    descriptionUser,
-
-
-    message,
-    idMessage,
-    messageFromLoggedUser,
-    add
-
+    description
 } : SkeListValue){
 
     //define the name of the url
@@ -57,8 +47,6 @@ export default function SkeListValue({
             nameURL = "account";
             break;
     }
-
-    console.log("Inside of ske", messageFromLoggedUser, idUser);
 
     return(
         <div
@@ -82,75 +70,6 @@ export default function SkeListValue({
                     </div>
 
                 </Link>
-            )}
-
-            {type === "chat" && (
-                <Link
-                    href={`/chat/${idUser}`}
-                    className="flex items-center gap-4 mt-5"
-                >
-                    <img
-                        src={image_url}
-                        className="max-w-[30px] max-h-[30px]"
-                    />
-
-                    <div
-                        className="text-[white]"
-                    >
-                        <p>{name}</p>
-                    </div>
-
-                </Link>
-            )}
-
-
-            {type === "add" && (
-                <div
-                    className="relative flex items-center w-[90vw] min-h-[50px] mt-5 p-3 gap-3 "
-                >
-                    <img
-                        src={"/configurationsPage/genericProfilePicture.png"}
-                    />
-
-                    <div
-                        className="flex items-center text-[white]"
-                    >
-                        {/*Name & Description */}
-                        <div>
-                            <p
-                                className=""
-                            >
-                                {name}
-                            </p>
-
-                            <p>
-                                {descriptionUser}
-                            </p>
-                        </div>
-
-                        {idLoggedUser !== idUser ? (
-                            <button
-                            onClick={() => {
-                                if(idUser){
-                                    add(idUser);
-                                }
-                            }}
-                            className="absolute right-5 min-w-[80px] p-2 bg-[#25D366] font-medium text-[black] border-[#000111] border-[2px] rounded-md cursor-pointer"
-                            >
-                                Add
-                            </button>
-                        ) : (
-                            <>
-                                <button
-                                    className="absolute right-5 min-w-[80px] p-2 bg-[#25D366] font-medium text-[black] border-[#000111] border-[2px] rounded-md cursor-pointer"
-                                >
-                                    You
-                                </button>
-                            </>
-                        )}
-                    </div>
-
-                </div>
             )}
         </div>
     )

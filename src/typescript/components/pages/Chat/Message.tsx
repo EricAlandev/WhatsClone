@@ -47,7 +47,7 @@ export default function SkeMessage({
         <div
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className={`relative flex items-center max-w-[150px] rounded-md gap-4 mt-5 p-2 bg-[#A0A0A0]
+            className={`relative flex items-center max-w-[150px] rounded-md gap-4 mt-5 p-2 bg-[#144D37] text-[white]
             ${messageFromLoggedUser === true ? 
                 `self-end` 
                     : 

@@ -3,6 +3,7 @@
 export type ChatType = {
     id: number,
     idUserMessage: number,
+    lastMessage: ChatType,
     profile_picture?: string,
     message?: string,
     name?: string

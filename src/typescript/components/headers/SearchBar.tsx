@@ -29,12 +29,7 @@ export default function SearchBar({send} : SearchBar){
     };
 
     useEffect(() => {
-        if(valueInput?.text == ""){
-            send({text: ""});
-        }
-        else{
             send(valueInput);
-        }
     }, [valueInput]);
     
 
@@ -57,7 +52,7 @@ export default function SearchBar({send} : SearchBar){
                         value={valueInput.text}
                         onChange={handleChange}
                         placeholder="Search"
-                        className=" w-[90vw] min-h-[45px] mx-auto pl-12.5 bg-[#2E2F2F] text-[17px] rounded-md placeholder:text-[#E2E8F0]"
+                        className=" w-[90vw] min-h-[45px] mx-auto pl-12.5 bg-[#2E2F2F] text-[17px] rounded-md placeholder:text-[#E2E8F0] text-[#E2E8F0]"
                     />
             </form>
         </div>

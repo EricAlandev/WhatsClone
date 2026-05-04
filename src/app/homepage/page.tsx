@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export default function HomepageUser(){
 
-    const {friendsFinded, SearchFriends , callAllChats} = useChatUseCase();
+    const {friendsFinded, originalChats, SearchFriends , callAllChats} = useChatUseCase();
 
     const {token} = useAuth();
     

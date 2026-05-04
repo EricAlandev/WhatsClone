@@ -1,7 +1,7 @@
 'use client'
 
 import { ChatType } from "@/typescript/types/ChatType"
-import SkeListValue from "../../skeletons/SkeListValue";
+import ChatSke from "../Chat/ChatSke";
 
 type RenderChat = {
     chats: ChatType[] | []
@@ -15,10 +15,12 @@ export default function RenderChats({chats}: RenderChat){
         >
             {chats?.length > 0 ?(
                 chats?.map((c) => (
-                    <SkeListValue
-                        type="chat"
-                        idUser={c?.id}
+                    <ChatSke
+                        idUser={c?.idUserMessage}
                         name={c?.name}
+                        message={c?.lastMessage?.message}
+                        status={c?.lastMessage?.status}
+                        time={c?.lastMessage?.time}
                     />
                 ))
             ) : (

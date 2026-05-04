@@ -10,16 +10,27 @@ import { alterMessageService, callAllMessagesService, deleteMessageService, send
 
 export default function useChatUseCase(){
 
+    //Chat with JUST THE CHATS OF THE USER
     const [originalChats, setOriginalChats] = useState<ChatType[] | []>([]);
+
+    //Chat with chats of the user. And the results of search
+    //So, have boths. Forthermore, being used to render the chats.
     const [friendsFinded, setFriendsFinded] = useState<ChatType[] | []>([]);
     const [messages, setMessages] = useState<ChatType[] | []>([]);
 
     const SearchFriends = async(text: string, token: string) => {
         try{
-            if(text && token){
+
+            if(text && token && text !== "" && text !== " "){
                 const resultSearch : ChatType[] = await searchFriendsService(text, token);
+
                 setFriendsFinded(resultSearch);
             }
+
+            else{
+                setFriendsFinded(originalChats);
+            }
+    
         }
 
         catch(error){
@@ -32,7 +43,12 @@ export default function useChatUseCase(){
             if(token){
                 const resultSearch : ChatType[] = await callAllChatsService(token);
                 console.log("resultSearch", resultSearch);
+
+                //Chats of the user;
                 setOriginalChats(resultSearch);
+
+                //;
+                setFriendsFinded(resultSearch);
             }
         }
 
@@ -55,7 +71,7 @@ export default function useChatUseCase(){
 
         }
     }, []);
-
+    
     const sendMessage = async(id: string, token: string, message: string) => {
         try{
             if(token){
@@ -97,6 +113,7 @@ export default function useChatUseCase(){
 
     return {
         friendsFinded ,
+        originalChats,
         SearchFriends, 
         callAllChats, 
         callMessages,

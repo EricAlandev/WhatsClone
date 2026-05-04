@@ -18,6 +18,9 @@ public interface ChatRepository extends JpaRepository<EntityChatTable, Long> {
 
 
     List<EntityChatTable> findByUser2(EntityUser user);
+
+    List<EntityChatTable> findByUser1OrUser2(EntityUser user, EntityUser user2);
+
     
 }
 

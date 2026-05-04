@@ -5,6 +5,7 @@ import SkeListValue from "../../skeletons/SkeListValue";
 import { useEffect } from "react";
 import useUserCase from "@/typescript/servers/useCases/UserUseCase";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
+import UserToAddSke from "./UserToAddSke";
 
 type RenderPeopleToAdd = {
     result: UserType[];
@@ -21,8 +22,7 @@ export default function RenderPeopleToAdd({result} : RenderPeopleToAdd){
         >  
             {result.length > 0 ? (
                 result.map((r) => (
-                    <SkeListValue
-                        type="add"
+                    <UserToAddSke
                         idUser={r?.id}
                         name={r?.name}
                         descriptionUser={r?.description}

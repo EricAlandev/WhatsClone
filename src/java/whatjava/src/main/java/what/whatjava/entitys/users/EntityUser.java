@@ -43,7 +43,6 @@ public class EntityUser {
     @OneToOne(mappedBy = "userNacionality", cascade = CascadeType.ALL)
     private EntityUserNacionality nacionality;
 
-
     //FRIEND SYSTEM
     @OneToMany(mappedBy = "userID", cascade = CascadeType.ALL)
     private List<EntityUserFriend> myUserId;
