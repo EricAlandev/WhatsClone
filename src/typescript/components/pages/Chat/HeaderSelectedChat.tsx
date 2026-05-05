@@ -4,10 +4,11 @@ type HeaderSelectedChat = {
     quantityMessages?: number[];
     back: () => void;
     edit: () => void;
+    putFixado: () => void;
     deleteMessages: (value: void) => void;
 }
 
-export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back, deleteMessages, edit} : HeaderSelectedChat){
+export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back, edit, putFixado, deleteMessages, } : HeaderSelectedChat){
 
     const moreThanOneMessage : boolean = (quantityMessages?.length > 1) ? true : false
 
@@ -42,6 +43,14 @@ export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back,
                             src={"/messages/change.png"}
                             onClick={() => {
                                 edit()
+                            }}
+                            className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
+                        />
+
+                        <img
+                            src={"/messages/PutFixado.png"}
+                            onClick={() => {
+                                putFixado()
                             }}
                             className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
                         />

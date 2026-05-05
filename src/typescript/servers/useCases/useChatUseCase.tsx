@@ -5,7 +5,7 @@ import { callAllChatsService, searchFriendsService } from "../services/ServiceSe
 import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType, selectedIds } from "@/typescript/types/ChatType";
-import { alterMessageService, callAllMessagesService, deleteMessageService, sendMessageService } from "../services/ServiceChat";
+import { alterMessageService, callAllMessagesService, deleteMessageService, fixMessageService, sendMessageService } from "../services/ServiceChat";
 
 
 export default function useChatUseCase(){
@@ -111,6 +111,20 @@ export default function useChatUseCase(){
         }
     };
 
+    const fixedMessage = async(ids: selectedIds[], token: string, idChat: string, timeToFix: string) => {
+        try{
+            if(token){
+                const fixedMessage : string = await fixMessageService(ids, token, timeToFix);
+                callMessages(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+
     return {
         friendsFinded ,
         originalChats,
@@ -119,6 +133,7 @@ export default function useChatUseCase(){
         callMessages,
         messages,
         sendMessage,
+        fixedMessage,
         deleteMessage,
         changeMessage
     }

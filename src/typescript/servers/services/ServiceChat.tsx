@@ -105,3 +105,32 @@ export const alterMessageService = async(ids: selectedIds[], token: string, mess
 
     }
 }
+
+export const fixMessageService = async(ids: selectedIds[], token: string, timeToFix: string) => {
+    try{
+        const queryParams = ids.map(id => `id=${id?.id}`).join('&');
+
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/fix/ids?${queryParams}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                timeToFix
+            })
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}

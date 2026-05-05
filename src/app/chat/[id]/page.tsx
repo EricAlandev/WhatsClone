@@ -3,6 +3,7 @@
 import AuthorizationComponent from "@/typescript/components/authorizations/AuthorizationComponent";
 import DeletePopuP from "@/typescript/components/pages/Chat/DeletePopUp";
 import EditMessagePopUp from "@/typescript/components/pages/Chat/EditMessagePopUp";
+import FixedPopUp from "@/typescript/components/pages/Chat/FixedPopUp";
 import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
@@ -27,11 +28,13 @@ export default function ChatPage(){
 
     const [isModalDelete, setIsModalDelete] = useState<boolean>(false);
     const [isModalEdit, setIsModalEdit] = useState<boolean>(false);
+    const [isModalFixed, setIsModalFixed] = useState<boolean>(false);
+
 
     const {id} = useParams();
 
     //database calls
-    const {callMessages, sendMessage, deleteMessage,changeMessage, messages} = useChatUseCase();
+    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, messages} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -65,6 +68,10 @@ export default function ChatPage(){
                     edit={() => {
                         setIsModalEdit(true);
                     }}
+                    putFixado={() => {
+                        setIsModalFixed(true)
+                    }}
+                    
                 />
 
                 <RenderMessages
@@ -127,6 +134,16 @@ export default function ChatPage(){
                             //set the header to the normal
                             setHeader("");
                             setHeaderSelected("hidden");
+                        }
+                    }}
+                />
+
+                <FixedPopUp
+                    openPopUp={isModalFixed}
+                    setIsModalFixed={setIsModalFixed}
+                    fixMessage={(timeToFix) => {
+                        if(token && id){
+                            fixedMessage(selectedId, token, id);
                         }
                     }}
                 />

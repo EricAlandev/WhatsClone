@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import what.whatjava.dtos.ChatDTO;
+import what.whatjava.dtos.TimeToFixDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.entitys.chats.EntityChatTable;
 import what.whatjava.entitys.chats.EntityMessage;
@@ -276,6 +277,8 @@ public class ChatService {
             messageValue.setUserID(actualUser);
             messageValue.setTime(timeNow);
             messageValue.setEdited(false);
+            messageValue.setFixed(true);
+            messageValue.setEnd_fixed(timeNow);
             messageRepository.save(messageValue);
 
             //save in messageChats;
@@ -348,6 +351,60 @@ public class ChatService {
             EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
 
             messageRepository.delete(message);
+        }
+
+        return "Messages deleted with sucess!";
+    }
+
+    @Transactional
+    public String fixedMessages(List<Number> ids, String token, TimeToFixDTO timeToFix){
+        Claims claims = jwtService.verifyToken(token);
+        Long idUser = claims.get("id", Long.class);
+
+        //verify if user exists;
+        EntityUser user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("user dosn't exist"));
+
+        //find and delete the messages
+        for(int i = 0; i < ids.size(); i++){
+            Number actualId = ids.get(i);
+
+            EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
+
+            if(message.isFixed() == false){
+                message.setFixed(true);
+            }
+
+            //verify how mutch time
+            Timestamp time = new Timestamp(System.currentTimeMillis());
+
+            switch (timeToFix.getTimeToFix()) {
+                case "24h":
+                    time.toLocalDateTime().plusDays(1);
+                    break;
+
+                case "7d":
+                    time.toLocalDateTime().plusDays(7);
+                    break;
+
+                case "30d":
+                    time.toLocalDateTime().plusDays(30);
+                    break;
+        
+                default:
+                    break;
+            }
+
+            message.setEnd_fixed(time);
+            messageRepository.save(message);
+            
+            //logs
+            EntityMessageLog messageLog = new EntityMessageLog();
+
+            messageLog.setAction("Fix the message");
+            messageLog.setMessageIdLog(message);
+            messageLog.setTime(time);
+            messageLog.setUserIdMessage(user);
+            messageLogRepository.save(messageLog);
         }
 
         return "Messages deleted with sucess!";

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
+import what.whatjava.dtos.TimeToFixDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.services.ChatService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,6 +104,20 @@ public class ChatController {
     );
 
     String callService = chatService.deleteMessages(ids , cleanToken);
+
+    System.out.println("value comming to front-end " + callService);
+    
+    return callService;
+}
+
+    @DeleteMapping("/chat/messages/fix/ids")
+    public String fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix) {
+
+    String cleanToken = (token.startsWith("Bearer ") 
+            ? token.substring(7) : token
+    );
+
+    String callService = chatService.fixedMessages(ids , cleanToken, timeToFix);
 
     System.out.println("value comming to front-end " + callService);
     
