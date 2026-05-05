@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
+import what.whatjava.entitys.logs.EntityMessageLog;
 import what.whatjava.entitys.users.EntityUser;
 
 @Entity
@@ -37,5 +38,8 @@ public class EntityMessage {
 
     @OneToMany(mappedBy = "messageID", cascade = CascadeType.ALL)
     private List<EntityMessagesChat> messageChat;
+
+    @OneToMany(mappedBy = "messageIdLog", cascade = CascadeType.ALL)
+    private List<EntityMessageLog> messagesLog;
 
 }

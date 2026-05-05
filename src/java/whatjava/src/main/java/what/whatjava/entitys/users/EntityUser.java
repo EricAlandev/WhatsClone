@@ -4,7 +4,7 @@ import java.util.List;
 import jakarta.persistence.*;
 import lombok.*;
 import what.whatjava.entitys.chats.EntityChatTable;
-import what.whatjava.entitys.chats.EntityMessage;
+import what.whatjava.entitys.logs.EntityMessageLog;
 
 @Entity
 @Table(name = "users") // Good practice to use plural names
@@ -57,4 +57,9 @@ public class EntityUser {
 
     @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL)
     private List<EntityChatTable> user2;
+
+    //Messages of the user;
+    @OneToMany(mappedBy = "userIdMessage", cascade = CascadeType.ALL)
+    private List<EntityMessageLog> messages;
+
 }

@@ -5,28 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
-import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Pageable;
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties.Sort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import what.whatjava.dtos.ChatDTO;
-import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
-import what.whatjava.dtos.UserResponseDTO.message;
-import what.whatjava.dtos.UserResponseDTO.user_1;
 import what.whatjava.entitys.chats.EntityChatTable;
 import what.whatjava.entitys.chats.EntityMessage;
 import what.whatjava.entitys.chats.EntityMessagesChat;
+import what.whatjava.entitys.logs.EntityMessageLog;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.entitys.users.EntityUserFriend;
 import what.whatjava.repository.ChatRepository;
+import what.whatjava.repository.MessageLogRepository;
 import what.whatjava.repository.MessageRepository;
 import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserFriendsRepository;
@@ -53,11 +47,16 @@ public class ChatService {
     @Autowired
     private MessageRepository messageRepository;
 
+    //Log
+    @Autowired
+    private MessageLogRepository messageLogRepository;
+
     @Autowired
     private JwtService jwtService;
 
     @Autowired
     private TimeService timeService;
+
 
     public List<ChatDTO> searchFriendsService(String search, String token){
 
@@ -170,14 +169,10 @@ public class ChatService {
         //verify if they are friends;
         userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
 
-        Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser);
+        Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser).or(() -> chatRepository.findByUser1AndUser2(otherUser, actualUser));
 
         //message to return (can be fulled or not);
         List<MessageDTO> messagesToReturn = new ArrayList<>();
-
-        if(chatTable.isEmpty()){
-            chatTable = chatRepository.findByUser1AndUser2(otherUser , actualUser);
-        }
         
         if(!chatTable.isEmpty()){
             EntityChatTable chatTableFound = chatTable.get();
@@ -185,18 +180,36 @@ public class ChatService {
             //define the newest values
             org.springframework.data.domain.Pageable pageable = PageRequest.of(0, 8, org.springframework.data.domain.Sort.by("id").descending());
 
+            //pull messages
             List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound, pageable);
 
-            //clean the messages and return
+            //set the messages non visualized to visualized 
             if(messagesChat.size() > 0){    
 
-               //visualize all of the messages
+                //creation of log
+                EntityMessageLog messageLog = new EntityMessageLog();
+
                for(int i =0; i < messagesChat.size(); i++){
                     if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
 
-                        messagesChat.get(i).getMessageID().setStatus("Visualized");
+                        String status = messagesChat.get(i).getMessageID().getStatus();
 
-                        messagesChatRepository.save(messagesChat.get(i));
+                        if(status == "not viewed"){
+                            messagesChat.get(i).getMessageID().setStatus("Visualized");
+
+                            messagesChatRepository.save(messagesChat.get(i));
+
+                            messageLog.setAction("");
+
+                            //Create log of visualization
+                            Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
+
+                            messageLog.setMessageIdLog(messagesChat.get(i).getMessageID());
+                            messageLog.setAction("User visualized the message");
+                            messageLog.setTime(timeNow);
+                            messageLog.setUserIdMessage(messagesChat.get(i).getMessageID().getUserID());
+                            messageLogRepository.save(messageLog);
+                        }
                     }
                }
                
@@ -230,41 +243,29 @@ public class ChatService {
             Long idActualUser = claims.get("id", Long.class);
             Long idOtherUser = Long.parseLong(id);
 
-            System.out.println("after the claims" + idActualUser + idOtherUser);
             //find users
             EntityUser actualUser = userRepository.findById(idActualUser).orElseThrow(() -> new RuntimeException("Actual user not found"));
 
             EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("other user not found"));
-            
-            System.out.println("after the creation of users" + actualUser + otherUser);
 
             //find table or create
-            Optional<EntityChatTable> chatTableFound = chatRepository.findByUser1AndUser2(actualUser, otherUser);
+            Optional<EntityChatTable> chatTableFound = chatRepository.findByUser1AndUser2(actualUser, otherUser).or(() -> chatRepository.findByUser1AndUser2(otherUser, actualUser));
+
             EntityChatTable chatTable = new EntityChatTable();
 
             //verify if didn't find
             if(chatTableFound.isEmpty()){
-                chatTableFound = chatRepository.findByUser1AndUser2(otherUser, actualUser);
-
-                //if the inverted find, its empty again. Create;
-                if(chatTableFound.isEmpty()){
                     EntityChatTable newChatTable = new EntityChatTable();
                 
                     newChatTable.setUser1(actualUser);
                     newChatTable.setUser2(otherUser);
                     chatRepository.save(newChatTable);
                     chatTable = newChatTable;
-                }
-
-                else{
-                    chatTable = chatTableFound.get();
-                }
             }
 
             else{
                 chatTable = chatTableFound.get();
             }
-
 
             //create message
             EntityMessage messageValue = new EntityMessage();
@@ -283,7 +284,17 @@ public class ChatService {
             messagesChat.setChatTableID(chatTable);
             messagesChat.setMessageID(messageValue);
             messagesChatRepository.save(messagesChat);
- 
+
+
+            //create the log
+            EntityMessageLog messageLog = new EntityMessageLog();
+
+            messageLog.setMessageIdLog(messageValue);
+            messageLog.setAction("Message sended");
+            messageLog.setTime(timeNow);
+            messageLog.setUserIdMessage(actualUser);
+            messageLogRepository.save(messageLog);
+
             return "200 - message";
         } catch (Exception e) {
             return "fail in the process of send the message";
@@ -295,7 +306,7 @@ public class ChatService {
         Claims claim = jwtService.verifyToken(token);
         Long id = claim.get("id", Long.class);
 
-        userRepository.findById(id).orElseThrow(() -> new RuntimeException("User dosn't exist"));
+        EntityUser user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User dosn't exist"));
 
         Number idMessage = ids.get(0);
 
@@ -308,6 +319,15 @@ public class ChatService {
 
         messageDB.setTime(now);
         messageRepository.save(messageDB);
+
+        //create the log
+        EntityMessageLog messageLog = new EntityMessageLog();
+
+        messageLog.setMessageIdLog(messageDB);
+        messageLog.setAction("Changed the message");
+        messageLog.setTime(now);
+        messageLog.setUserIdMessage(user);
+        messageLogRepository.save(messageLog);
 
         return  "";
     }

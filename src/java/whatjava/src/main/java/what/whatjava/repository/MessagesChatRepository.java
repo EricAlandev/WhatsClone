@@ -13,5 +13,6 @@ public interface MessagesChatRepository extends JpaRepository<EntityMessagesChat
 
     //Pageable its a prop that define how mutch values do u wanna pull;
     List<EntityMessagesChat> findByChatTableID(EntityChatTable chatTableIDm, org.springframework.data.domain.Pageable pageable);
+    
 }
 
