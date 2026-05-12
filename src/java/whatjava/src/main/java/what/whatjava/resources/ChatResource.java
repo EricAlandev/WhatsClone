@@ -1,0 +1,47 @@
+package what.whatjava.resources;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import what.whatjava.dtos.ChatDTO;
+import what.whatjava.dtos.ChatDTO.MessageDTO;
+import what.whatjava.dtos.MesssageDTO;
+import what.whatjava.dtos.TimeToFixDTO;
+
+@RestController
+@RequestMapping("/chat") 
+@CrossOrigin(origins = "http://localhost:3000")
+public interface ChatResource {
+
+    @GetMapping
+        List<ChatDTO> findChats(@RequestHeader("Authorization") String token);
+
+    @PostMapping("/search")
+        List<ChatDTO> searchFriendsToChat(@RequestParam("search") String valueSearch , @RequestHeader("Authorization") String token);
+
+    @GetMapping("/messages/{id}")
+        List<MessageDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
+    
+    @PostMapping("/messages/{id}")
+        String sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message);
+
+    @PutMapping("/messages/ids")
+        String editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message);
+    
+    @DeleteMapping("/messages/ids")
+        String sendMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
+
+    @PutMapping("/messages/fix/ids")
+        String fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
+}

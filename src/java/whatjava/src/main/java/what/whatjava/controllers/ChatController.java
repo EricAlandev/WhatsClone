@@ -8,7 +8,9 @@ import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.TimeToFixDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
-import what.whatjava.services.ChatService;
+import what.whatjava.resources.ChatResource;
+import what.whatjava.services.services.Chat.ChatService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController 
 @RequestMapping("/chat") 
 @CrossOrigin(origins = "http://localhost:3000")
-public class ChatController {
+public class ChatController implements ChatResource {
     
     @Autowired
     private ChatService chatService; 
 
-        @GetMapping
-        public List<ChatDTO> findChats(@RequestHeader("Authorization") String token) {
+        @Override
+        public List<ChatDTO> findChats(String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -37,8 +39,8 @@ public class ChatController {
         return callService;
         }
 
-        @PostMapping("/search")
-        public List<ChatDTO> searchFriendsToChat(@RequestParam("search") String valueSearch , @RequestHeader("Authorization") String token) {
+        @Override
+        public List<ChatDTO> searchFriendsToChat(String valueSearch ,String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -51,8 +53,8 @@ public class ChatController {
         return callService;
     }
 
-        @GetMapping("/messages/{id}")
-        public List<MessageDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token) {
+        @Override
+        public List<MessageDTO> pullMessages(String id, String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -65,8 +67,8 @@ public class ChatController {
         return callService;
     }
 
-        @PostMapping("/messages/{id}")
-        public String sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message) {
+        @Override
+        public String sendMessage(String id, String token,  MesssageDTO message) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -82,7 +84,7 @@ public class ChatController {
     }
 
     @PutMapping("/messages/ids")
-    public String editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message) {
+    public String editMessage(List<Number> ids, String token ,   MesssageDTO message) {
 
     String cleanToken = (token.startsWith("Bearer ") 
             ? token.substring(7) : token
@@ -97,7 +99,7 @@ public class ChatController {
     
 
     @DeleteMapping("/messages/ids")
-    public String sendMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token) {
+    public String sendMessage(List<Number> ids, String token) {
 
     String cleanToken = (token.startsWith("Bearer ") 
             ? token.substring(7) : token
@@ -110,12 +112,14 @@ public class ChatController {
     return callService;
 }
 
-    @DeleteMapping("/chat/messages/fix/ids")
-    public String fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix) {
+    @PutMapping("/messages/fix/ids")
+    public String fixMessage(List<Number> ids, String token,   TimeToFixDTO timeToFix) {
 
     String cleanToken = (token.startsWith("Bearer ") 
             ? token.substring(7) : token
     );
+
+    System.out.println("value comming from the front-end \n\n\n\n\n\n\n\n" + cleanToken);
 
     String callService = chatService.fixedMessages(ids , cleanToken, timeToFix);
 

@@ -110,6 +110,8 @@ export const fixMessageService = async(ids: selectedIds[], token: string, timeTo
     try{
         const queryParams = ids.map(id => `id=${id?.id}`).join('&');
 
+        console.log("INSIDE OF FIXED MESSAGE SERVICE WITH THE VALUES", ids, token, timeToFix, queryParams);
+
         const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/fix/ids?${queryParams}`, {
             method: "PUT",
             headers: {

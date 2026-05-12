@@ -4,6 +4,7 @@ import AuthorizationComponent from "@/typescript/components/authorizations/Autho
 import DeletePopuP from "@/typescript/components/pages/Chat/DeletePopUp";
 import EditMessagePopUp from "@/typescript/components/pages/Chat/EditMessagePopUp";
 import FixedPopUp from "@/typescript/components/pages/Chat/FixedPopUp";
+import FixedRenderMessage from "@/typescript/components/pages/Chat/FixedRenderMessage";
 import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
@@ -74,26 +75,35 @@ export default function ChatPage(){
                     
                 />
 
-                <RenderMessages
-                    idOfLoggedUser={user?.id}
-                    chats={messages}
-                    options={(onOrOf, idMessage, message, time , status) => {
-                        //define if the header is selected and wish is chosed;
-                        if(onOrOf === true){
-                            setHeader("hidden");
-                            setHeaderSelected("");
-                            
-                            //pass the id,message, time from message
-                            setSelectedIds(prev => [...prev, {id: idMessage, message: message, time: time, status: status}]);
-                        }
-                        else{
-                            setHeader("");
-                            setHeaderSelected("hidden");
-                        }
-                    }}
-                    HeaderSelected={headerSelected}
-                    selectedIds={selectedId}
-                />
+                {/*Body of messages */}
+                <div
+                    className="relative"
+                >
+                    <FixedRenderMessage
+                        chats={messages}
+                    />
+
+                    <RenderMessages
+                        idOfLoggedUser={user?.id}
+                        chats={messages}
+                        options={(onOrOf, idMessage, message, time , status) => {
+                            //define if the header is selected and wish is chosed;
+                            if(onOrOf === true){
+                                setHeader("hidden");
+                                setHeaderSelected("");
+                                
+                                //pass the id,message, time from message
+                                setSelectedIds(prev => [...prev, {id: idMessage, message: message, time: time, status: status}]);
+                            }
+                            else{
+                                setHeader("");
+                                setHeaderSelected("hidden");
+                            }
+                        }}
+                        HeaderSelected={headerSelected}
+                        selectedIds={selectedId}
+                    />
+                </div>
 
                 <SendMessage
                     send={(message) => {
@@ -143,7 +153,11 @@ export default function ChatPage(){
                     setIsModalFixed={setIsModalFixed}
                     fixMessage={(timeToFix) => {
                         if(token && id){
-                            fixedMessage(selectedId, token, id);
+                            fixedMessage(selectedId, token, id, timeToFix);
+
+                            setIsModalFixed(false);
+                            setHeader("");
+                            setHeaderSelected("hidden");
                         }
                     }}
                 />

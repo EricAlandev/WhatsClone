@@ -47,25 +47,28 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                         const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false     
                         
                         return(
-                            <SkeMessage
-                            key={c.id}
-                            idMessage={c.id}
-                            message={c?.message}
-                            time={c?.time}
-                            messageFromLoggedUser={messageFromUser}
-                            status={c?.status}
-                            edited={c?.edited}
-                            HeaderSelected={HeaderSelected}
-                            selectedMessage={selectedMessage}
+                            <>
 
-                            options={(onOrOf, idMessage) => {
-                                if(idMessage && c?.message && c?.time && c?.status){
-                                    //send the state of selected,   idMessage, message, time, status
-                                    options(onOrOf, idMessage, c?.message, c?.time, c?.status);
-                                }
-                                
-                            }}
-                        />
+                            <SkeMessage
+                                key={c.id}
+                                idMessage={c.id}
+                                message={c?.message}
+                                time={c?.time}
+                                messageFromLoggedUser={messageFromUser}
+                                status={c?.status}
+                                edited={c?.edited}
+                                HeaderSelected={HeaderSelected}
+                                selectedMessage={selectedMessage}
+
+                                options={(onOrOf, idMessage) => {
+                                    if(idMessage && c?.message && c?.time && c?.status){
+                                        //send the state of selected,   idMessage, message, time, status
+                                        options(onOrOf, idMessage, c?.message, c?.time, c?.status);
+                                    }
+                                    
+                                }}
+                            />
+                            </>
                         )
                     })
                 )}

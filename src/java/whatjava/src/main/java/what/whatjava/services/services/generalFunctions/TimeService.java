@@ -1,4 +1,4 @@
-package what.whatjava.services;
+package what.whatjava.services.services.generalFunctions;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

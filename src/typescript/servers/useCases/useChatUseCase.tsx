@@ -114,6 +114,7 @@ export default function useChatUseCase(){
     const fixedMessage = async(ids: selectedIds[], token: string, idChat: string, timeToFix: string) => {
         try{
             if(token){
+                console.log("INSIDE OF FIXED MESSAGE WITH THE VALUES", ids, token, idChat, timeToFix);
                 const fixedMessage : string = await fixMessageService(ids, token, timeToFix);
                 callMessages(idChat, token);
             }

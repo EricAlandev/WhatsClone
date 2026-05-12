@@ -1,5 +1,5 @@
 
-package what.whatjava.services;
+package what.whatjava.services.services.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

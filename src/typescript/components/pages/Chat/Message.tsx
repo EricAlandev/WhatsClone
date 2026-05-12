@@ -10,7 +10,7 @@ type Message = ChatType &{
     idMessage?: number,
     messageFromLoggedUser?: boolean
     selectedMessage: boolean,
-    edited: boolean
+    edited: boolean,
 
     options: (onOrOf: boolean, idMessage: number) => void;
     HeaderSelected: string;

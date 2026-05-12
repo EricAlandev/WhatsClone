@@ -1,4 +1,6 @@
 package what.whatjava.dtos;
+import java.security.Timestamp;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.*;
@@ -27,6 +29,8 @@ public class ChatDTO {
         private String message;
         private String status;
         private boolean edited;
+        private boolean fixed;
+        private Timestamp endFixed;
         private String time;
     }
 }

@@ -1,4 +1,4 @@
-package what.whatjava.services;
+package what.whatjava.services.services.Jwt;
 
 import java.security.Key;
 import java.util.Date;

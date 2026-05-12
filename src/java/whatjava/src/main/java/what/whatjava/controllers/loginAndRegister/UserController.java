@@ -3,27 +3,22 @@ package what.whatjava.controllers.loginAndRegister;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import what.whatjava.dtos.SearchDTO;
 import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.entitys.users.EntityUser;
-import what.whatjava.services.loginAndRegister.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import what.whatjava.resources.UserResource;
+import what.whatjava.services.services.loginAndRegister.UserService;
 
 
-@RestController 
-@RequestMapping("/api/users") 
-@CrossOrigin(origins = "http://localhost:3000")
-public class UserController {
+public class UserController implements UserResource{
     
     @Autowired
     private UserService  userService; 
 
-    @PostMapping
-    public UserResponseDTO registerUser(@RequestBody EntityUser user) {
+    @Override
+    public UserResponseDTO registerUser(EntityUser user) {
 
         UserResponseDTO callService = userService.saveUser(user);
 
@@ -32,8 +27,8 @@ public class UserController {
         return callService;
     }
 
-    @PostMapping("/AddFriends")
-    public List<UserResponseDTO> searchUsers(@RequestBody SearchDTO search, @RequestHeader("Authorization") String token) {
+    @Override
+    public List<UserResponseDTO> searchUsers(SearchDTO search,  String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -46,8 +41,8 @@ public class UserController {
         return callService;
     }
 
-    @PostMapping("/AddFriends/{id}")
-    public String searchUsers(@PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
+    @Override
+    public String addFriend(Long id, @RequestHeader String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token

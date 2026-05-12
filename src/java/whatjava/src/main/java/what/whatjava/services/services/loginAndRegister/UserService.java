@@ -1,5 +1,5 @@
 
-package what.whatjava.services.loginAndRegister; 
+package what.whatjava.services.services.loginAndRegister; 
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.entitys.users.EntityUserFriend;
 import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
-import what.whatjava.services.JwtService;
+import what.whatjava.services.services.Jwt.JwtService;
 
 @Service
 public class UserService {

@@ -1,6 +1,7 @@
-package what.whatjava.services;
+package what.whatjava.services.services.Chat;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,8 @@ import what.whatjava.repository.MessageRepository;
 import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
+import what.whatjava.services.services.Jwt.JwtService;
+import what.whatjava.services.services.generalFunctions.TimeService;
 
 @Service
 public class ChatService {
@@ -179,7 +182,7 @@ public class ChatService {
             EntityChatTable chatTableFound = chatTable.get();
 
             //define the newest values
-            org.springframework.data.domain.Pageable pageable = PageRequest.of(0, 8, org.springframework.data.domain.Sort.by("id").descending());
+            org.springframework.data.domain.Pageable pageable = PageRequest.of(0,8 , org.springframework.data.domain.Sort.by("id").descending());
 
             //pull messages
             List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound, pageable);
@@ -223,6 +226,7 @@ public class ChatService {
                     .status(message.getMessageID().getStatus())
                     .edited(message.getMessageID().isEdited())//for primitive values like boolean. I need to use is
                     .time(timeService.TextConvert(message.getMessageID().getTime()))
+                    .fixed(message.getMessageID().isFixed())
                     .build()
                 ).toList();
             }
@@ -377,22 +381,26 @@ public class ChatService {
             //verify how mutch time
             Timestamp time = new Timestamp(System.currentTimeMillis());
 
+            LocalDateTime ldt = time.toLocalDateTime();
+
             switch (timeToFix.getTimeToFix()) {
                 case "24h":
-                    time.toLocalDateTime().plusDays(1);
+                    ldt = ldt.plusDays(1);
                     break;
 
                 case "7d":
-                    time.toLocalDateTime().plusDays(7);
+                    ldt = ldt.plusDays(7);
                     break;
 
                 case "30d":
-                    time.toLocalDateTime().plusDays(30);
+                    ldt = ldt.plusDays(30);
                     break;
         
                 default:
                     break;
             }
+
+            time = Timestamp.valueOf(ldt);
 
             message.setEnd_fixed(time);
             messageRepository.save(message);
