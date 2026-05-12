@@ -17,7 +17,7 @@ import what.whatjava.repository.UserRepository;
 import what.whatjava.services.services.Jwt.JwtService;
 
 @Service
-public class UserService {
+public class UserService{
 
     @Autowired
     UserRepository userRepository;

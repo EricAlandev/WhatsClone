@@ -1,34 +1,39 @@
-package what.whatjava.controllers.loginAndRegister; 
+package what.whatjava.controllers;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import what.whatjava.dtos.SearchDTO;
 import what.whatjava.dtos.UserResponseDTO;
-import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.resources.UserResource;
+import what.whatjava.services.ResponseRequest.RegisterRequest;
+import what.whatjava.services.ResponseRequest.RegisterResponse;
+import what.whatjava.services.services.ServiceExecute;
+import what.whatjava.services.services.loginAndRegister.RegisterService;
 import what.whatjava.services.services.loginAndRegister.UserService;
 
+public class UserController implements UserResource {
 
-public class UserController implements UserResource{
-    
     @Autowired
     private UserService  userService; 
+        @Autowired 
+    private  RegisterService  registerService;
 
     @Override
-    public UserResponseDTO registerUser(EntityUser user) {
+    public CompletableFuture<String> registerUser(RegisterRequest user) {
 
-        UserResponseDTO callService = userService.saveUser(user);
-
-        System.out.println("value comming to front-end " + callService);
-        
-        return callService;
+        return ServiceExecute.execute(
+            registerService,
+            new RegisterService.InputValues(user),
+            (outPut) -> RegisterResponse.from(outPut.getRegisterResponse().getName())
+        );
     }
 
     @Override
-    public List<UserResponseDTO> searchUsers(SearchDTO search,  String token) {
+    public List<UserResponseDTO> searchUsers(SearchDTO search, String token) {
 
         String cleanToken = (token.startsWith("Bearer ") 
                 ? token.substring(7) : token
@@ -53,5 +58,8 @@ public class UserController implements UserResource{
         System.out.println("value comming to front-end " + callService);
         
         return callService;
+    } {
+        
     }
+
 }

@@ -3,7 +3,6 @@ package what.whatjava.services.services.loginAndRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import lombok.Value;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.repository.UserRepository;
@@ -12,7 +11,7 @@ import what.whatjava.services.services.UseCase;
 import what.whatjava.services.services.Jwt.JwtService;
 
 @Service
-public class LoginService implements UseCase<LoginService.InputValues, LoginService.OutputValues> {
+public class LoginService implements UseCase<LoginService.InputValues, LoginService.OutPutValues> {
 
     @Autowired
     UserRepository userRepository;
@@ -26,12 +25,12 @@ public class LoginService implements UseCase<LoginService.InputValues, LoginServ
     }
 
     @Value
-    public static class OutputValues implements UseCase.OutPutValues {
+    public static class OutPutValues implements UseCase.OutPutValues {
         EntityUser loginResponse; 
     }
 
     @Override
-    public OutputValues execute(InputValues input) {
+    public OutPutValues execute(InputValues input) {
         // Use the data from the input wrapper
         String email = input.loginRequest.getEmail();
         String password = input.loginRequest.getPassword();
@@ -46,6 +45,6 @@ public class LoginService implements UseCase<LoginService.InputValues, LoginServ
         user.setToken(token);
         userRepository.save(user);
 
-        return new OutputValues(user);
+        return new OutPutValues(user);
     }
 }

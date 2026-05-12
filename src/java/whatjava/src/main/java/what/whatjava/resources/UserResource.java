@@ -1,6 +1,7 @@
 package what.whatjava.resources;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import what.whatjava.dtos.SearchDTO;
 import what.whatjava.dtos.UserResponseDTO;
-import what.whatjava.entitys.users.EntityUser;
+import what.whatjava.services.ResponseRequest.RegisterRequest;
 
 @RestController
 @RequestMapping("/api/users") 
@@ -20,8 +21,8 @@ import what.whatjava.entitys.users.EntityUser;
 public interface UserResource {
 
     @PostMapping
-    UserResponseDTO registerUser(@RequestBody EntityUser user);
-
+    CompletableFuture<String>registerUser(@RequestBody  RegisterRequest user);
+    
     @PostMapping("/AddFriends")
     List<UserResponseDTO> searchUsers(@RequestBody SearchDTO search, @RequestHeader("Authorization") String token);
 
