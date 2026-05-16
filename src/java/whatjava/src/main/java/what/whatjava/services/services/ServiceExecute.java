@@ -12,6 +12,8 @@ public interface ServiceExecute {
     ){
         O output = useCase.execute(input);
         
+        System.out.println("Original Output" + output);
+
         // Mapping execution
         return CompletableFuture.completedFuture(outputManager.apply(output));
     };

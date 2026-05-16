@@ -3,9 +3,12 @@ package what.whatjava.services.services.loginAndRegister;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Value;
 import what.whatjava.entitys.users.EntityUser;
+import what.whatjava.entitys.users.EntityUserNacionality;
+import what.whatjava.entitys.users.EntityUserNumber;
 import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
 import what.whatjava.services.ResponseRequest.RegisterRequest;
@@ -35,18 +38,31 @@ public class RegisterService implements UseCase<RegisterService.InputValues, Reg
     }
 
     @Override
+    @Transactional
     public OutPutValues execute(InputValues input){
 
         EntityUser user = new EntityUser();
+        EntityUserNumber number = new EntityUserNumber();
+        EntityUserNacionality nacionality = new EntityUserNacionality();
+
         RegisterRequest inputValue = input.getRegisterRequest();
 
         user.setName(inputValue.getName());
         user.setBirthday(inputValue.getBirthday());
         user.setEmail(inputValue.getEmail());
-        user.getNacionality().setCity(inputValue.getCity());;
-        user.getNacionality().setCountry(inputValue.getCountry());
-        user.getNumber().setDdd(inputValue.getDdd());
-        user.getNumber().setNumber(inputValue.getNumber());
+        user.setPassword(inputValue.getPassword());
+
+        nacionality.setCity(inputValue.getCity());
+        nacionality.setCountry(inputValue.getCountry());
+        nacionality.setUserNacionality(user);
+
+        number.setDdd(inputValue.getDdd());
+        number.setNumber(inputValue.getNumber());
+        number.setUser(user);
+
+
+        user.setNacionality(nacionality);
+        user.setNumber(number);
 
         userRepository.save(user);
 

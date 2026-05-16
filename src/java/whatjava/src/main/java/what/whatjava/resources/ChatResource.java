@@ -1,6 +1,7 @@
 package what.whatjava.resources;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,23 +26,23 @@ import what.whatjava.dtos.TimeToFixDTO;
 public interface ChatResource {
 
     @GetMapping
-        List<ChatDTO> findChats(@RequestHeader("Authorization") String token);
+        CompletableFuture<List<ChatDTO>> findChats(@RequestHeader("Authorization") String token);
 
     @PostMapping("/search")
-        List<ChatDTO> searchFriendsToChat(@RequestParam("search") String valueSearch , @RequestHeader("Authorization") String token);
+        CompletableFuture<List<ChatDTO>> searchFriendsToChat(@RequestParam("search") String valueSearch , @RequestHeader("Authorization") String token);
 
     @GetMapping("/messages/{id}")
-        List<MessageDTO> pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
+        CompletableFuture<List<MessageDTO>>pullMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
     
     @PostMapping("/messages/{id}")
-        String sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message);
+        CompletableFuture<String> sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message);
 
     @PutMapping("/messages/ids")
-        String editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message);
+        CompletableFuture<String> editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message);
     
     @DeleteMapping("/messages/ids")
-        String sendMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
+        CompletableFuture<String> deleteMessages(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 
     @PutMapping("/messages/fix/ids")
-        String fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
+        CompletableFuture<String> fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
 }

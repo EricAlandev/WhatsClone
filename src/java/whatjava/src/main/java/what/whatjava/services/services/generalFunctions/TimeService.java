@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TimeService {
     
-    public String TextConvert(Timestamp time){
+    public static String TextConvert(Timestamp time){
 
         if(time == null) return "";
 

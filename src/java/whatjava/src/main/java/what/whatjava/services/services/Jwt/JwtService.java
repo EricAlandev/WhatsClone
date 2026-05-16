@@ -48,4 +48,12 @@ public class JwtService {
             throw new RuntimeException("Invalid or expired JWT token");
         }
     } 
+
+    public String pickTokenFromHeader(String token) {
+            String cleanToken = (token.startsWith("Bearer") 
+            ? token.substring(7) : ""
+            );
+
+            return cleanToken;
+    } 
 }

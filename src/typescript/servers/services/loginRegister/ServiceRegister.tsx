@@ -4,7 +4,7 @@ import { UserType } from "@/typescript/types/UserType"
 
 export const makeRegister = async(data: UserType) => {
     try{
-        const registerFetch = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/register/api`, {
+        const request = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/api/users`, {
             method: 'POST',
             headers: {
                 'Content-type' : 'application/json'
@@ -15,18 +15,23 @@ export const makeRegister = async(data: UserType) => {
                     email: data?.email,
                     password: data?.password,
                     birthday: data?.birthday,
-                    number: {
-                        ddd: data?.ddd,
-                        number: data?.number
-                    },
-                    nacionality: {
-                        city: data?.city,
-                        country: data?.country
-                    }
+                    ddd: data?.ddd,
+                    number: data?.number,
+
+                    city: data?.city,
+                    country: data?.country
 
                 }
             )
         })
+
+        if(!request.ok){
+            throw new Error("Server error" + request.status)
+        }
+
+        const response = await request.json();
+
+        return response
     }
 
     catch(error){
