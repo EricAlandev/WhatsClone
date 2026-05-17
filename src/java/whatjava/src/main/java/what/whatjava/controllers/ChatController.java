@@ -99,8 +99,6 @@ public class ChatController implements ChatResource {
 
         String cleanToken = jwtService.pickTokenFromHeader(token);
 
-        System.out.println("CONTROLLER DATA ----" + message);
-
         return ServiceExecute.execute(                           
                 sendMessageService,
                 new SendMessageService.InputValues(id, cleanToken, message),

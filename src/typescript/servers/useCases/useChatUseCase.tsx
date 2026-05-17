@@ -81,7 +81,7 @@ export default function useChatUseCase(){
         }
 
         catch(error){
-
+            console.log("error", error);
         }
     };
 
