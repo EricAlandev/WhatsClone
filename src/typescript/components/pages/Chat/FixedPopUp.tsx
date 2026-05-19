@@ -1,6 +1,4 @@
-import { selectedIds } from "@/typescript/types/ChatType"
 import React, { useState } from "react";
-
 
 type FixedPopUp = {
     openPopUp?: any
@@ -81,7 +79,7 @@ export default function FixedPopUp({openPopUp, setIsModalFixed , fixMessage} : F
                             id="7d"
                             type="radio"
                             name="time"       
-                            value="7d"          
+                            value="7d"         
                             onChange={handleChanger}
                             checked={message.time === "7d"}
                         />

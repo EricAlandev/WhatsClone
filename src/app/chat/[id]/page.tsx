@@ -27,15 +27,18 @@ export default function ChatPage(){
     //array with the selectedIds
     const [selectedId, setSelectedIds] = useState<selectedIds[]>([]);
 
+    //Id to define the message who the page need to find;
+    const [idMessageFixed, SetIdFixedMessage] = useState<number | null>(0);
+
+    //modais
     const [isModalDelete, setIsModalDelete] = useState<boolean>(false);
     const [isModalEdit, setIsModalEdit] = useState<boolean>(false);
     const [isModalFixed, setIsModalFixed] = useState<boolean>(false);
 
-
     const {id} = useParams();
 
     //database calls
-    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, messages} = useChatUseCase();
+    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, unFixMessage, messages} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -46,7 +49,7 @@ export default function ChatPage(){
 
     return(
         <div
-            className="flex flex-col pb-2 bg-[#161717]"
+            className="flex flex-col pb-2  bg-[#161717]"
         >
             <AuthorizationComponent>
                 {/*Normal header */}
@@ -57,6 +60,7 @@ export default function ChatPage(){
                 {/*Header when at least one message is selected */}
                 <HeaderSelectedChat
                     hiddenOrNot={headerSelected}
+                    selectedId={selectedId}
                     back={() => {
                         setHeader("");
                         setHeaderSelected("hidden");
@@ -72,28 +76,33 @@ export default function ChatPage(){
                     putFixado={() => {
                         setIsModalFixed(true)
                     }}
+                    takeOutFixado={() => {
+                        if(token && id){
+                            unFixMessage(selectedId,token, id);
+                        }
+                    }}
                     
                 />
 
                 {/*Body of messages */}
-                <div
-                    className="relative"
-                >
+                <>
                     <FixedRenderMessage
+                        idFixedMessage={idMessageFixed}
+                        SetIdFixedMessage={SetIdFixedMessage}
                         chats={messages}
                     />
 
                     <RenderMessages
                         idOfLoggedUser={user?.id}
                         chats={messages}
-                        options={(onOrOf, idMessage, message, time , status) => {
+                        options={(onOrOf, idMessage, message, time , status, fixed) => {
                             //define if the header is selected and wish is chosed;
                             if(onOrOf === true){
                                 setHeader("hidden");
                                 setHeaderSelected("");
                                 
                                 //pass the id,message, time from message
-                                setSelectedIds(prev => [...prev, {id: idMessage, message: message, time: time, status: status}]);
+                                setSelectedIds(prev => [...prev, {id: idMessage, message: message, time: time, status: status, fixed: fixed}]);
                             }
                             else{
                                 setHeader("");
@@ -102,8 +111,10 @@ export default function ChatPage(){
                         }}
                         HeaderSelected={headerSelected}
                         selectedIds={selectedId}
+
+                        idMessageFixed={idMessageFixed}
                     />
-                </div>
+                </>
 
                 <SendMessage
                     send={(message) => {
@@ -152,7 +163,8 @@ export default function ChatPage(){
                     openPopUp={isModalFixed}
                     setIsModalFixed={setIsModalFixed}
                     fixMessage={(timeToFix) => {
-                        if(token && id){
+                        console.log(`fixed component ${timeToFix}`);
+                        if(token && id && timeToFix){
                             fixedMessage(selectedId, token, id, timeToFix);
 
                             setIsModalFixed(false);

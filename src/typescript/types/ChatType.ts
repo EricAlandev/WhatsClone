@@ -22,5 +22,6 @@ export type selectedIds = {
     id: number,
     message:string,
     time: string,
-    status: string
+    status: string,
+    fixed: boolean
 }

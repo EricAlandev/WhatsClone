@@ -1,67 +1,85 @@
+'use client'
+
 import { ChatType } from "@/typescript/types/ChatType"
 import DefineHowManyFixed from "./DefineHowManyFixed";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 type FixedRenderMessage = {
-    chats : ChatType[] | []
+    chats : ChatType[] | [];
+    idFixedMessage: any,
+    SetIdFixedMessage: any;
 }
 
-export default function FixedRenderMessage({chats} : FixedRenderMessage){
+export default function FixedRenderMessage({chats, 
+    idFixedMessage, SetIdFixedMessage} : FixedRenderMessage){
 
-    console.log("Chats fixed render", chats)
-
-    let fixedQuantity : number = 0;
+    let fixedQuantity : ChatType[] = [];
 
     //verify if exist fixed messages;
     for(let i = 0; i < chats?.length; i++){
         if(chats[i].fixed === true){
-            fixedQuantity++;
+            fixedQuantity.push(chats[i]);
         }
     }
 
-    if(fixedQuantity === 0) return null
+    if(fixedQuantity.length === 0) return null
+
 
     return(
-        <>
-            {fixedQuantity > 0 &&(
-                <Swiper>
-                   {chats.map((c) => (
-                    <>
-                        <SwiperSlide
-                            key={c?.id}
-                            className="absolute w-full h-[10vh]  max-h-[45px] bg-[#A0A0A0] z-50"
-                        >
+        <div
+            className=" w-full h-[10vh] max-h-[50px] bg-[#A0A0A0] z-50"
+        >
+            {fixedQuantity.length > 0 &&(
+                <div
+                    className=" flex items-center top-2"
+                >
+                    <DefineHowManyFixed
+                        quantity={fixedQuantity}
+                        idFixedMessage={idFixedMessage}
+                    />
 
-                            {/*Message + img */}
-                            <div
-                                className="flex items-center mt-2"
-                            >
+                        {fixedQuantity.map((c, index) => {
+                            if(idFixedMessage === index){
+                                return (
+                                    <div
+                                        key={c?.id}
+                                        className=" flex items-center w-full"
 
-                                <DefineHowManyFixed
-                                    quantity={fixedQuantity}
-                                />
+                                        //Define the id Of the fixedMessage;
+                                        onClick={() => {
+                                            //If is the last value set to 0;
+                                            if(idFixedMessage + 1 >= fixedQuantity.length ){
+                                                SetIdFixedMessage(0);
+                                            }
 
-                                {/*render*/}
-                                <div
-                                    className="flex gap-5"
-                                >
-                                    <img
-                                        src={"/messages/PutFixado.png"}
-                                        className="max-h-[25px] ml-4"
-                                    />
-
-                                    <p
-                                        className=" text-[white]"
+                                            else{
+                                                SetIdFixedMessage(idFixedMessage + 1);
+                                            }
+                                        }}
+                                        
                                     >
-                                        {c?.message}
-                                    </p>
-                                </div>
-                            </div>
-                    </SwiperSlide>
-                    </>
-                ))}
-                </Swiper>
+                                            {/*Message + img */}
+                                                <div
+                                                    id={`${c?.id}`}
+                                                    className="flex gap-5 ml-2"
+                                                >
+                                                    <img
+                                                        src={"/messages/PutFixado.png"}
+                                                        className="max-h-[25px] ml-4"
+                                                    />
+
+                                                    <p
+                                                        className=" text-[white]"
+                                                    >
+                                                        {c?.message}
+                                                    </p>
+                                            </div>
+                                    </div>
+                                )
+                            }
+                        })}
+                </div>
             )}
-        </>
+        </div>
     )
 }

@@ -90,19 +90,19 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
 
             //set the messages non visualized to visualized 
             if(messagesChat.size() > 0){    
-
-                //creation of log
-                EntityMessageLog messageLog = new EntityMessageLog();
-
                for(int i =0; i < messagesChat.size(); i++){
-                    if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
 
+                    //Gonna define that the message was visualized;
+                    if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
                         String status = messagesChat.get(i).getMessageID().getStatus();
 
                         if(status == "not viewed"){
                             messagesChat.get(i).getMessageID().setStatus("Visualized");
 
                             messagesChatRepository.save(messagesChat.get(i));
+
+                            //creation of log
+                            EntityMessageLog messageLog = new EntityMessageLog();
 
                             messageLog.setAction("");
 

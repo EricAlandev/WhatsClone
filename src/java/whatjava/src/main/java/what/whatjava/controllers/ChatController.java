@@ -25,6 +25,7 @@ import what.whatjava.services.services.Chat.FixedMessageService;
 import what.whatjava.services.services.Chat.PullMessagesService;
 import what.whatjava.services.services.Chat.SearchFriendsService;
 import what.whatjava.services.services.Chat.SendMessageService;
+import what.whatjava.services.services.Chat.UnFixMessageService;
 import what.whatjava.services.services.Jwt.JwtService;
 
 
@@ -53,6 +54,9 @@ public class ChatController implements ChatResource {
 
     @Autowired
     private FixedMessageService fixedMessageService;
+
+    @Autowired
+    private UnFixMessageService unFixMessageService;
 
 
     @Autowired
@@ -106,6 +110,7 @@ public class ChatController implements ChatResource {
         );
     }
 
+    @Override
     @PutMapping("/messages/ids")
     public CompletableFuture<String> editMessage(List<Number> ids, String token ,   MesssageDTO message) {
 
@@ -119,6 +124,7 @@ public class ChatController implements ChatResource {
     }
     
 
+    @Override
     @DeleteMapping("/messages/ids")
     public CompletableFuture<String> deleteMessages(List<Number> ids, String token) {
 
@@ -131,6 +137,7 @@ public class ChatController implements ChatResource {
         );
     }
 
+    @Override
     @PutMapping("/messages/fix/ids")
     public CompletableFuture<String> fixMessage(List<Number> ids, String token, TimeToFixDTO timeToFix) {
 
@@ -140,6 +147,18 @@ public class ChatController implements ChatResource {
         return ServiceExecute.execute(
             fixedMessageService,
              new FixedMessageService.InputValues(ids, cleanToken, timeToFix.getTimeToFix()),
+            (output) -> FixedMessageResponse.from(output.getResponse())
+        );
+    }
+
+    @DeleteMapping("/messages/fix/ids")
+    public CompletableFuture<String> unFixMessage(List<Number> ids, String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        return ServiceExecute.execute(
+            unFixMessageService,
+             new UnFixMessageService.InputValues(ids, cleanToken),
             (output) -> FixedMessageResponse.from(output.getResponse())
         );
     }

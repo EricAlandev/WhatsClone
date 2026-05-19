@@ -53,24 +53,32 @@ public class FixedMessageService implements UseCase<FixedMessageService.InputVal
         String timeToFix = input.getTimeToFix();
         List<Number> ids = input.getIds();
 
+        System.out.println("Values from input in the service " + token + timeToFix + ids);
+
         Claims claims = jwtService.verifyToken(token);
         Long idUser = claims.get("id", Long.class);
 
         //verify if user exists;
         EntityUser user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("user dosn't exist"));
 
-        //find and delete the messages
+        System.out.println("User service " + user.getId());
+
+        //find and fix the messages
         for(int i = 0; i < ids.size(); i++){
             Number actualId = ids.get(i);
 
+            System.out.println("Actual id " + actualId);
+
             EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
 
-            if(message.isFixed() == false){
-                message.setFixed(true);
-            }
+            System.out.println("Message inside of the for " + message.getId() + message.getMessage());
+
+            message.setFixed(true);
 
             //verify how mutch time
             Timestamp time = new Timestamp(System.currentTimeMillis());
+
+            System.out.println("Normal time " + time);
 
             LocalDateTime ldt = time.toLocalDateTime();
 
@@ -93,7 +101,13 @@ public class FixedMessageService implements UseCase<FixedMessageService.InputVal
 
             time = Timestamp.valueOf(ldt);
 
+            System.out.println("Normal time with plus time" + time);
+
+
             message.setEnd_fixed(time);
+
+            System.out.println("Final message " + message.getId() + message.isFixed() + message.getMessage()  +message.getEnd_fixed());
+
             messageRepository.save(message);
             
             //logs

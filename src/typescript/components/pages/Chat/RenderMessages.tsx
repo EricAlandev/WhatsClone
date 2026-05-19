@@ -2,34 +2,65 @@
 
 import { ChatType, selectedIds } from "@/typescript/types/ChatType"
 import SkeMessage from "./Message";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type RenderChat = {
     chats: ChatType[] | [],
     idOfLoggedUser: number,
     selectedIds: selectedIds[],
-    options: (turnedOn: boolean, idMessage: number, message: string, time: string, status: string) => void;
+    options: (turnedOn: boolean, idMessage: number, message: string, time: string, status: string, fixed: boolean) => void;
     HeaderSelected: string;
+
+
+    //props to refer the message that is fixed(Used to when someon click, he gonna change the screen to the exactly location)
+    idMessageFixed: any;
 }
 
-export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSelected, selectedIds}: RenderChat){
+export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSelected, selectedIds, idMessageFixed}: RenderChat){
+
+    const [userClikFixedMessage, setUserClikFixedMessage] = useState<boolean>(false);
 
     //pick the div and set the scroll to be in the last message
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    //define the ref of the message
+    const messageRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
     if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-    }, [chats]); 
+
+    let interval : ReturnType<typeof setTimeout>;
+
+    if(idMessageFixed){
+        messageRef.current?.scrollIntoView({
+            behavior: "smooth", 
+            block: "center",
+        })
+
+        setUserClikFixedMessage(true);
+
+        interval = setTimeout(() => {
+            setUserClikFixedMessage(false);
+        }, 2000);
+    }
+
+    return () => {
+        if(interval){
+            clearTimeout(interval);
+        }
+    }
+
+    }, [chats, idMessageFixed]); 
 
     return(
         <div
             ref={scrollRef}
-            className="w-[90vw] h-[90vh] h-[90vh]  mx-auto   overflow-y-auto pb-16"
+            className=" w-[90vw] h-[90vh] mx-auto   overflow-y-auto pb-16"
         >
             <div
-                className="flex flex-col"
+                className="flex flex-col pt-[0px]"
             >
                 {chats?.length > 0 &&(
                     chats?.map((c) => {
@@ -38,36 +69,38 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                         let selectedMessage: boolean = false;
 
                         for(let i = 0; i < selectedIds.length; i++){
-                            if(c?.id === selectedIds[i].id){
+                            if(c?.id === selectedIds[i]?.id){
                                 selectedMessage = true
                             }
                         }
 
                         //message from user or not
-                        const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false     
+                        const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false   
                         
                         return(
                             <>
+                                <SkeMessage
+                                    key={c.id}
+                                    idMessage={c.id}
+                                    message={c?.message}
+                                    messageRef={messageRef}
+                                    time={c?.time}
+                                    messageFromLoggedUser={messageFromUser}
+                                    status={c?.status}
+                                    edited={c?.edited}
+                                    HeaderSelected={HeaderSelected}
+                                    selectedMessage={selectedMessage}
 
-                            <SkeMessage
-                                key={c.id}
-                                idMessage={c.id}
-                                message={c?.message}
-                                time={c?.time}
-                                messageFromLoggedUser={messageFromUser}
-                                status={c?.status}
-                                edited={c?.edited}
-                                HeaderSelected={HeaderSelected}
-                                selectedMessage={selectedMessage}
-
-                                options={(onOrOf, idMessage) => {
-                                    if(idMessage && c?.message && c?.time && c?.status){
-                                        //send the state of selected,   idMessage, message, time, status
-                                        options(onOrOf, idMessage, c?.message, c?.time, c?.status);
-                                    }
+                                    options={(onOrOf, idMessage) => {
+                                        if(idMessage && c?.message && c?.time && c?.status){
+                                            //send the state of selected,   idMessage, message, time, status
+                                            options(onOrOf, idMessage, c?.message, c?.time, c?.status, c?.fixed);
+                                        }  
+                                    }}
                                     
-                                }}
-                            />
+                                    //props just to define if the clik in the fixed message
+                                    userClikFixedMessage={userClikFixedMessage}
+                                />
                             </>
                         )
                     })

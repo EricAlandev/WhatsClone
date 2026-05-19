@@ -1,50 +1,58 @@
+import { ChatType } from "@/typescript/types/ChatType";
 
 type DefineHowManyFixed = {
-    quantity: number
+    quantity: ChatType[],
+    idFixedMessage: number
 }
 
-export default function DefineHowManyFixed({quantity}: DefineHowManyFixed){
-
-    //define the quantity of fixed messages;
-    const fixedMessages : string[] = [];
-
-    for(let i = 0; i < quantity; i++){
-        fixedMessages.push("value");
-    }
+export default function DefineHowManyFixed({quantity, idFixedMessage}: DefineHowManyFixed){
 
     //prop who define the height of each fixed message simbol;
-    let height = "h-[10px]";
+    let height = "text-[12px]";
 
-    switch(quantity){
+    switch(quantity.length){
         case 1:
-         height = "h-[10px]"
+         height = "text-[15px]"
          break;
 
         case 2:
-         height = "h-[5px]"
+         height = "text-[12px]"
          break;
 
         case 3:
-         height = "h-[3px]"
+         height = "text-[8px]"
          break;
 
         default:
-         height = "h-[10px]"
+         height = "text-[12px]"
          break
     }
 
     return(
         <>  
-            {fixedMessages.length > 0 && (
+            {quantity?.length > 0 && (
                 <div
-                    className="gap-2 ml-2 mb-5"
+                    className="flex flex-col gap-4.5 ml-2 mb-5"
                 >
-                    {fixedMessages.map(() => {
+                    {quantity?.map((c, index) => {
+                        
                         return(
-                            <div>
-                                <p className={`${height} text-[white]`}>|</p>
+                            <div
+                                key={index}
+                                className={`max-h-[0.5px]`}
+                            >
+                                    <p className={`font-extrabold ${height}
+
+                                    ${idFixedMessage == index ? 
+                                        "text-[gray]" 
+                                        : 
+                                        "text-[white]"
+                                    }
+                                    `}>
+                                        |
+                                    </p>
                             </div>
-                        )
+                            )
                         })
                     }
                 </div>

@@ -1,16 +1,23 @@
+import { selectedIds } from "@/typescript/types/ChatType";
 
 type HeaderSelectedChat = {
     hiddenOrNot?: string;
-    quantityMessages?: number[];
+    quantityMessages: number[];
+    selectedId: selectedIds[];
+
     back: () => void;
     edit: () => void;
     putFixado: () => void;
+    takeOutFixado: () => void;
     deleteMessages: (value: void) => void;
 }
 
-export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back, edit, putFixado, deleteMessages, } : HeaderSelectedChat){
+export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, selectedId, back, edit, putFixado, takeOutFixado, deleteMessages } : HeaderSelectedChat){
 
     const moreThanOneMessage : boolean = (quantityMessages?.length > 1) ? true : false
+
+    //verify if have fixed Messages, if have, gonna renderize the component to take out the attached;
+    const haveFixedMessages : boolean = selectedId.some(message => message.fixed === true);
 
     return(
         <div
@@ -47,13 +54,25 @@ export default function HeaderSelectedChat({hiddenOrNot, quantityMessages, back,
                             className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
                         />
 
-                        <img
-                            src={"/messages/PutFixado.png"}
-                            onClick={() => {
-                                putFixado()
-                            }}
-                            className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3 "
-                        />
+                        {haveFixedMessages === false ? (
+                            <img
+                                src={"/messages/PutFixado.png"}
+                                onClick={() => {
+                                    putFixado()
+                                }}
+                                className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3"
+                            />
+                        ) : (
+                            <>
+                                <img
+                                    src={"/messages/NotFixed.png"}
+                                    onClick={() => {
+                                        takeOutFixado()
+                                    }}
+                                    className="min-w-[28px] min-h-[28px] max-w-[25px] max-h-[25px] mt-3 ml-3"
+                                />
+                            </>
+                        )}
                     </>
                 )}
             </div>
