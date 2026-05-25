@@ -17,6 +17,8 @@ import what.whatjava.services.ResponseRequest.FixedMessageResponse;
 import what.whatjava.services.ResponseRequest.PullMessagesResponse;
 import what.whatjava.services.ResponseRequest.SearchFriendsResponse;
 import what.whatjava.services.ResponseRequest.SendMessageResponse;
+import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse;
+import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse.ReturnTimeResponse;
 import what.whatjava.services.services.ServiceExecute;
 import what.whatjava.services.services.Chat.DeleteMessagesService;
 import what.whatjava.services.services.Chat.EditMessageService;
@@ -26,6 +28,7 @@ import what.whatjava.services.services.Chat.PullMessagesService;
 import what.whatjava.services.services.Chat.SearchFriendsService;
 import what.whatjava.services.services.Chat.SendMessageService;
 import what.whatjava.services.services.Chat.UnFixMessageService;
+import what.whatjava.services.services.Chat.VerifyFixedTimeService;
 import what.whatjava.services.services.Jwt.JwtService;
 
 
@@ -54,6 +57,9 @@ public class ChatController implements ChatResource {
 
     @Autowired
     private FixedMessageService fixedMessageService;
+
+    @Autowired
+    private VerifyFixedTimeService verifyFixedTimeService;
 
     @Autowired
     private UnFixMessageService unFixMessageService;
@@ -151,6 +157,22 @@ public class ChatController implements ChatResource {
         );
     }
 
+    @Override
+    @PutMapping("/messages/verify/fix/ids")
+    public CompletableFuture<ReturnTimeResponse> verifyFixMessage(List<Number> ids, String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        System.out.println("Inside of the controller");
+        
+        return ServiceExecute.execute(
+            verifyFixedTimeService,
+             new VerifyFixedTimeService.InputValues(ids, cleanToken),
+            (output) -> VerifyFixedTimeResponse.from(output.getResponse(), output.getMessage())
+        );
+    }
+
+    @Override
     @DeleteMapping("/messages/fix/ids")
     public CompletableFuture<String> unFixMessage(List<Number> ids, String token) {
 

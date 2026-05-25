@@ -63,7 +63,7 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                 className="flex flex-col pt-[0px]"
             >
                 {chats?.length > 0 &&(
-                    chats?.map((c) => {
+                    chats?.map((c, index) => {
                         
                         //verify if the message is selected
                         let selectedMessage: boolean = false;
@@ -76,6 +76,9 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
 
                         //message from user or not
                         const messageFromUser = (idOfLoggedUser === c?.idUserMessage) ? true : false   
+
+                        //verify If that is the fixed message
+                        const thisIsFixedMessageClicked : boolean = (index === idMessageFixed) ? true : false
                         
                         return(
                             <>
@@ -99,6 +102,7 @@ export default function RenderMessages({chats, idOfLoggedUser, options, HeaderSe
                                     }}
                                     
                                     //props just to define if the clik in the fixed message
+                                    thisIsFixedMessageClicked={thisIsFixedMessageClicked}
                                     userClikFixedMessage={userClikFixedMessage}
                                 />
                             </>

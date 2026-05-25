@@ -18,15 +18,14 @@ type Message = ChatType &{
 
 
     //props just to define if the clik in the fixed message
-    userClikFixedMessage: boolean
-
-    
+    userClikFixedMessage: boolean;
+    thisIsFixedMessageClicked: boolean
 }
 
 export default function SkeMessage({
     message, idMessage, messageFromLoggedUser, time, status,selectedMessage , edited,
     
-    options, HeaderSelected, messageRef, userClikFixedMessage
+    options, HeaderSelected, messageRef, userClikFixedMessage, thisIsFixedMessageClicked
 } : Message){
 
     const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -68,7 +67,7 @@ export default function SkeMessage({
             }
             ${(HeaderSelected !== "hidden" && messageFromLoggedUser === true && selectedMessage === true)  && "bg-[#F1F1F1]"} 
             
-            ${userClikFixedMessage === true ? "bg-[#F1F1F1] duration-400" : "bg-[#144D37] duration-400"}
+            ${(userClikFixedMessage === true && thisIsFixedMessageClicked === true) ? "bg-[#F1F1F1] duration-400" : "bg-[#144D37] duration-400"}
             `}
         >
 

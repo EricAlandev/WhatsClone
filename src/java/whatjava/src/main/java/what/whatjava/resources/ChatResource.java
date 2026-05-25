@@ -19,6 +19,7 @@ import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.TimeToFixDTO;
+import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse.ReturnTimeResponse;
 
 @RestController
 @RequestMapping("/chat") 
@@ -45,6 +46,10 @@ public interface ChatResource {
 
     @PutMapping("/messages/fix/ids")
         CompletableFuture<String> fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
+
+        
+    @PutMapping("/messages/verify/fix/ids")
+        public CompletableFuture<ReturnTimeResponse> verifyFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 
     @DeleteMapping("/messages/fix/ids")
         CompletableFuture<String> unFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);

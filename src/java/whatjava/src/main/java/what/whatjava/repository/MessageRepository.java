@@ -16,5 +16,7 @@ public interface MessageRepository extends JpaRepository<EntityMessage, Long> {
     List<EntityMessage> findByUserID(EntityUser userID);
 
     Optional<EntityMessage> findById(Number id);
+
+    Optional<EntityMessage> findByIdAndUserID(Number id, EntityUser user);
 }
 

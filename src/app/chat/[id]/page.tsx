@@ -38,7 +38,7 @@ export default function ChatPage(){
     const {id} = useParams();
 
     //database calls
-    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, unFixMessage, messages} = useChatUseCase();
+    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, unFixMessage,verifyFixedMessages , messages} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -90,6 +90,9 @@ export default function ChatPage(){
                         idFixedMessage={idMessageFixed}
                         SetIdFixedMessage={SetIdFixedMessage}
                         chats={messages}
+                        verifyFixedMessages={verifyFixedMessages}
+                        token={token}
+                        idPage={id}
                     />
 
                     <RenderMessages

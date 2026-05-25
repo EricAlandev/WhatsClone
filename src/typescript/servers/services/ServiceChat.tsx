@@ -162,3 +162,31 @@ export const unfixMessageService = async(ids: selectedIds[], token: string) => {
 
     }
 }
+
+export const verifyFixedMessageService = async(ids: Number[], token: string) => {
+    try{
+        const queryParams = ids.map(id => `id=${id}`).join('&');
+        console.log("Inside of the serviceeee" , ids, token);
+
+        
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/verify/fix/ids?${queryParams}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response : string = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}
