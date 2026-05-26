@@ -9,7 +9,7 @@ import useConfigurationUseCase from "@/typescript/servers/useCases/Configuration
 export default function ConfigurationsPage(){
 
     const {user} = useAuth();
-    const {list} = useConfigurationUseCase();
+    const {list, searchConfigurationsList} = useConfigurationUseCase();
     
     return(
         <div
@@ -18,6 +18,9 @@ export default function ConfigurationsPage(){
                 <AuthorizationComponent>
                     <HeaderConfig
                         name={user?.name}
+                        searchProp={(text) => {
+                            searchConfigurationsList(text)
+                        }}
                     />
                     
                     <ListConfigurations

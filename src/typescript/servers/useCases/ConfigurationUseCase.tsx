@@ -6,15 +6,18 @@ import { ConfigsList } from "@/typescript/types/ConfigsListType";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 
 export default function useConfigurationUseCase(){
-    console.log("inside of configurationUseCase");
 
+    //Save the original value that come from database.
+    const [originalList, setOriginalList] = useState<ConfigsList[]>([]);
+
+    //the value that the front-end use with the similar vlaues
     const [list, setList] = useState<ConfigsList[]>([]);
 
     const callConfigurationsList = async() => {
         try{
             const call : ConfigsList[] = await callConfigurationsListService();
-            console.log("response of the call", call);
 
+            setOriginalList(call);
             setList(call);
         }
 
@@ -23,11 +26,38 @@ export default function useConfigurationUseCase(){
         }
     }
 
+    const searchConfigurationsList = async(prop?: string) => {
+        try{
+
+            if(!prop){
+                setList(originalList)
+            }
+            
+            else{
+                const simularValues : ConfigsList[] = [];
+
+                for(let i = 0; i < originalList.length; i++){
+                    const ActualList = originalList[i];
+
+                    if(ActualList.nameList.includes(prop)){
+                        simularValues.push(ActualList);
+                    }
+                }
+
+                //verify and set the props.
+                setList(simularValues);
+            }
+        }
+
+        catch(error){
+
+        }
+    }
+
     useEffect(() => {
-        console.log("inside of useeffet");        
             callConfigurationsList();
     }, []);
 
 
-    return {list};
+    return {list, searchConfigurationsList};
 }
