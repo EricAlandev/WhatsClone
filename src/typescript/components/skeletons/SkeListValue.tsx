@@ -3,8 +3,6 @@ import ImageStatusMessage from "./ImageStatusMessage";
 
 
 type SkeListValue = {
-    type: "list" | "chat" |  "add" | "message"
-
     //list type
     idList?: number,
     nameList?: string,
@@ -24,14 +22,9 @@ type SkeListValue = {
     time?: string,
     idMessage?: number,
     messageFromLoggedUser?: boolean,
-
-    //functions
-    add: (id: number ) => void
-
 }
 
 export default function SkeListValue({
-    type,
     image_url,
     nameList,
     description
@@ -39,6 +32,7 @@ export default function SkeListValue({
 
     //define the name of the url
     let nameURL : string;
+    
     switch(nameList){
         case"Invite friends":
             nameURL = "inviteFriends";
@@ -52,7 +46,6 @@ export default function SkeListValue({
         <div
             className="relative"
         >
-            {type === "list" && (
                 <Link
                     href={`/configurations/${nameURL}`}
                     className="flex items-center gap-4 mt-5"
@@ -70,7 +63,6 @@ export default function SkeListValue({
                     </div>
 
                 </Link>
-            )}
         </div>
     )
 }

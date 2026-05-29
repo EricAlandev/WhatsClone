@@ -25,7 +25,6 @@ export default function ListConfigurations({lists} : ListConfigurations){
                 lists?.map((l) => (
                     <>
                         <SkeListValue
-                            type="list"
                             nameList={l?.nameList}
                             description={l?.description}
                             image_url={l?.imageUrl}

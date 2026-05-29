@@ -1,18 +1,9 @@
 
 package what.whatjava.services.services.loginAndRegister; 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
 import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.entitys.users.EntityUser;
-import what.whatjava.entitys.users.EntityUserFriend;
-import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
 import what.whatjava.services.services.Jwt.JwtService;
 

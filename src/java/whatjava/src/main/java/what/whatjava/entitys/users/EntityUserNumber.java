@@ -1,5 +1,4 @@
 package what.whatjava.entitys.users;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.*;

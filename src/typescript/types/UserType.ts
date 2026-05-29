@@ -12,3 +12,24 @@ export type UserType = {
     ddd?: string,
     number?: string
 }
+
+export type UserWithClass = {
+    id?: number,
+    name?: string,
+    email?: string,
+    password?: string,
+    birthday?: string,
+    description?: string,
+    number: Number,
+    nacionality: nacionality
+}
+
+export type Number = {
+    ddd?: string,
+    number?: string
+}
+
+export type nacionality = {
+    city?: string,
+    country?: string,
+}
