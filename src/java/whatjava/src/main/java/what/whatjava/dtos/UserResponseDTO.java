@@ -24,6 +24,7 @@ public class UserResponseDTO {
     private List<ChatsContainers> chats;
 
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NumberDTO {
@@ -32,6 +33,7 @@ public class UserResponseDTO {
     }
 
     @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NacionalityDTO {

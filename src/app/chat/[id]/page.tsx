@@ -9,6 +9,7 @@ import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
 import SendMessage from "@/typescript/components/pages/Chat/SendMessage";
+import UserDetail from "@/typescript/components/pages/Chat/UserDetail";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
 import { selectedIds } from "@/typescript/types/ChatType";
@@ -24,6 +25,8 @@ export default function ChatPage(){
     const [header, setHeader] = useState<string>();
     const [headerSelected, setHeaderSelected] = useState<string>("hidden");
 
+    const [isUserDetailOpen, setIsUserDetailOpen] = useState<boolean>(false);
+
     //array with the selectedIds
     const [selectedId, setSelectedIds] = useState<selectedIds[]>([]);
 
@@ -38,12 +41,14 @@ export default function ChatPage(){
     const {id} = useParams();
 
     //database calls
-    const {callMessages, sendMessage, deleteMessage,changeMessage,fixedMessage, unFixMessage,verifyFixedMessages , messages} = useChatUseCase();
+    const {callOptions, options, callMessages, sendMessage, deleteMessage, callUserData, changeMessage,fixedMessage, unFixMessage,verifyFixedMessages , messages , userData} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
-            if(id){
+            if(id && token){
                 callMessages(id, token);
+                callUserData(id, token);
+                callOptions(token);
             }
     }, [id, token, callMessages]);
 
@@ -55,6 +60,14 @@ export default function ChatPage(){
                 {/*Normal header */}
                 <HeaderChatPage
                     hiddenOrNot={header}
+                    setIsUserDetailOpen={setIsUserDetailOpen}
+                />  
+                
+                {/*Detail Page - Overlay*/}
+                <UserDetail
+                    userData={userData}
+                    isUserDetailOpen={isUserDetailOpen}
+                    setIsUserDetailOpen={setIsUserDetailOpen}
                 />
 
                 {/*Header when at least one message is selected */}
@@ -81,7 +94,6 @@ export default function ChatPage(){
                             unFixMessage(selectedId,token, id);
                         }
                     }}
-                    
                 />
 
                 {/*Body of messages */}

@@ -32,7 +32,7 @@ export default function DefineHowManyFixed({quantity, idFixedMessage}: DefineHow
         <>  
             {quantity?.length > 0 && (
                 <div
-                    className="flex flex-col gap-4.5 ml-2 mb-5"
+                    className="flex flex-col gap-4.5 ml-2 mb-5 z-40"
                 >
                     {quantity?.map((c, index) => {
                         

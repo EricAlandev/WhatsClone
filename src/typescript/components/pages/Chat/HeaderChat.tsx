@@ -1,11 +1,13 @@
 import Link from "next/link"
+import UserDetail from "./UserDetail"
 
 type HeaderChatPage = {
     name?: string,
-    hiddenOrNot?: string
+    hiddenOrNot?: string,
+    setIsUserDetailOpen: any;
 }
 
-export default function HeaderChatPage({name, hiddenOrNot} : HeaderChatPage){
+export default function HeaderChatPage({name, hiddenOrNot, setIsUserDetailOpen} : HeaderChatPage){
 
     return(
         <div
@@ -22,6 +24,9 @@ export default function HeaderChatPage({name, hiddenOrNot} : HeaderChatPage){
 
             {/* Name + profile picture */}
             <div
+                onClick={() => {
+                    setIsUserDetailOpen(true);
+                }}
                 className="flex items-center mt-3"
             >
                 <img

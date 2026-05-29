@@ -1,9 +1,59 @@
 import { selectedIds } from "@/typescript/types/ChatType";
+import { UserType } from "@/typescript/types/UserType";
 
 export const callAllMessagesService = async(id:string, token: string,) => {
     try{
         console.log("Inside of call service", id, token);
         const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/${id}`, {
+            method: "GET",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}
+
+export const callOptionsService = async(token: string,) => {
+    try{
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/options`, {
+            method: "GET",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}
+
+export const callUserDataService = async(id:string, token: string,) => {
+    try{
+        console.log("inside of callUserData");
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/user/${id}`, {
             method: "GET",
             headers: {
                 'Content-type' : 'application/json',

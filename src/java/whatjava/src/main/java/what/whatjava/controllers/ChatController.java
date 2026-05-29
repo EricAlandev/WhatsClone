@@ -8,13 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import what.whatjava.dtos.ChatDTO;
 import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.dtos.TimeToFixDTO;
+import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
+import what.whatjava.dtos.DomainListDTO;
 import what.whatjava.resources.ChatResource;
 import what.whatjava.services.ResponseRequest.DeleteMessageResponse;
 import what.whatjava.services.ResponseRequest.EditMessageResponse;
 import what.whatjava.services.ResponseRequest.FindsChatResponse;
 import what.whatjava.services.ResponseRequest.FixedMessageResponse;
 import what.whatjava.services.ResponseRequest.PullMessagesResponse;
+import what.whatjava.services.ResponseRequest.PullOptionsResponse;
+import what.whatjava.services.ResponseRequest.PullUserDataResponse;
 import what.whatjava.services.ResponseRequest.SearchFriendsResponse;
 import what.whatjava.services.ResponseRequest.SendMessageResponse;
 import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse;
@@ -24,7 +28,9 @@ import what.whatjava.services.services.Chat.DeleteMessagesService;
 import what.whatjava.services.services.Chat.EditMessageService;
 import what.whatjava.services.services.Chat.FindChatsService;
 import what.whatjava.services.services.Chat.FixedMessageService;
+import what.whatjava.services.services.Chat.PullAllOptionsService;
 import what.whatjava.services.services.Chat.PullMessagesService;
+import what.whatjava.services.services.Chat.PullUserDataService;
 import what.whatjava.services.services.Chat.SearchFriendsService;
 import what.whatjava.services.services.Chat.SendMessageService;
 import what.whatjava.services.services.Chat.UnFixMessageService;
@@ -45,6 +51,12 @@ public class ChatController implements ChatResource {
 
     @Autowired
     private PullMessagesService pullMessagesService; 
+
+    @Autowired
+    private PullAllOptionsService pullAllOptionsService;
+
+    @Autowired
+    private PullUserDataService pullUserDataService;
 
     @Autowired
     private SendMessageService sendMessageService; 
@@ -81,6 +93,18 @@ public class ChatController implements ChatResource {
      }
 
      @Override
+    public CompletableFuture<List<DomainListDTO>> pullAllOptions(String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        return ServiceExecute.execute(
+                pullAllOptionsService, 
+                new PullAllOptionsService.InputValues(cleanToken), 
+                (output) -> PullOptionsResponse.from(output.getOptions())
+        );
+     }
+
+     @Override
      public CompletableFuture<List<ChatDTO>> searchFriendsToChat(String valueSearch ,String token) {
 
         String cleanToken = jwtService.pickTokenFromHeader(token);
@@ -101,6 +125,18 @@ public class ChatController implements ChatResource {
             pullMessagesService, 
             new PullMessagesService.InputValues(id, cleanToken), 
             (output) -> PullMessagesResponse.from(output.getMessages())
+        );
+     }
+
+     @Override
+     public CompletableFuture<UserResponseDTO> pullUserData(String id, String Token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(Token);
+
+        return ServiceExecute.execute(
+            pullUserDataService, 
+            new PullUserDataService.InputValues(id, cleanToken), 
+            (output) -> PullUserDataResponse.from((output.getFindedUser()))
         );
      }
 

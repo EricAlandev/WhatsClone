@@ -2,14 +2,12 @@ package what.whatjava.services.services.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import lombok.Value;
-import what.whatjava.dtos.ChatDTO;
 import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.entitys.users.EntityUserFriend;
 import what.whatjava.repository.UserFriendsRepository;

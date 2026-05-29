@@ -1,11 +1,12 @@
 'use client'
 
-import { UserType } from "@/typescript/types/UserType"
+import { UserType, UserWithClass } from "@/typescript/types/UserType"
 import { callAllChatsService, searchFriendsService } from "../services/ServiceSearchFriends"
 import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType, selectedIds } from "@/typescript/types/ChatType";
-import { alterMessageService, callAllMessagesService, deleteMessageService, fixMessageService, sendMessageService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
+import { alterMessageService, callAllMessagesService, callOptionsService, callUserDataService, deleteMessageService, fixMessageService, sendMessageService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
+import { ConfigsList } from "@/typescript/types/ConfigsListType";
 
 
 export default function useChatUseCase(){
@@ -13,10 +14,13 @@ export default function useChatUseCase(){
     //Chat with JUST THE CHATS OF THE USER
     const [originalChats, setOriginalChats] = useState<ChatType[] | []>([]);
 
+    const [options, setOptions] = useState<ConfigsList[]>([]);
     //Chat with chats of the user. And the results of search
     //So, have boths. Forthermore, being used to render the chats.
     const [friendsFinded, setFriendsFinded] = useState<ChatType[] | []>([]);
     const [messages, setMessages] = useState<ChatType[] | []>([]);
+
+    const [userData, setUserData] = useState<UserWithClass>();
 
     const SearchFriends = async(text: string, token: string) => {
         try{
@@ -31,6 +35,21 @@ export default function useChatUseCase(){
                 setFriendsFinded(originalChats);
             }
     
+        }
+
+        catch(error){
+
+        }
+    }
+
+    const callOptions = async(token: string) => {
+        try{
+            if(token){
+                const resultSearch : ConfigsList[] = await callOptionsService(token);
+                console.log("reuslt options", resultSearch);
+                
+                setOptions(resultSearch);
+            }
         }
 
         catch(error){
@@ -57,12 +76,30 @@ export default function useChatUseCase(){
         }
     }
 
+    const callUserData = useCallback(async(id: string, token: string) => {
+        try{
+            if(token){
+                console.log("Inside of the callUserData");
+                const resultSearch : UserWithClass = await callUserDataService(id, token);
+
+                console.log(resultSearch);
+
+                setUserData(resultSearch);
+
+
+         }
+        }
+
+        catch(error){
+
+        }
+    }, []);
+
     const callMessages = useCallback(async(id: string, token: string) => {
         try{
             if(token){
-                console.log("Inside of the call messages", token, id);
                 const resultSearch : ChatType[] = await callAllMessagesService(id, token);
-                console.log("resultSearch", resultSearch);
+
                 setMessages(resultSearch);
             }
         }
@@ -156,9 +193,13 @@ export default function useChatUseCase(){
     return {
         friendsFinded ,
         originalChats,
+        callOptions,
+        options,
         SearchFriends, 
         callAllChats, 
         callMessages,
+        callUserData,
+        userData,
         messages,
         sendMessage,
         fixedMessage,

@@ -60,7 +60,7 @@ export default function FixedRenderMessage({chats,
 
     return(
         <div
-            className=" w-full h-[10vh] max-h-[50px] bg-[#A0A0A0] z-50"
+            className=" w-full h-[10vh] max-h-[50px] bg-[#A0A0A0] z-40"
         >
             {fixedQuantity.length > 0 &&(
                 <div

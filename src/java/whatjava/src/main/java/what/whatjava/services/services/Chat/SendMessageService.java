@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import lombok.Value;
 import what.whatjava.dtos.MesssageDTO;
-import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.entitys.chats.EntityChatTable;
 import what.whatjava.entitys.chats.EntityMessage;
 import what.whatjava.entitys.chats.EntityMessagesChat;
