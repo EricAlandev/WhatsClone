@@ -1,9 +1,9 @@
 
 
 export type ConfigsList = {
-    id: number,
+    id?: number,
     nameList: string,
     description?: string,
     imageUrl: string, 
-    code: number
+    code?: number
 }

@@ -1,4 +1,6 @@
 package what.whatjava.entitys.chats;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +24,9 @@ public class EntityMessagesChat {
     @ManyToOne
     @JoinColumn(name = "message_id")
     private EntityMessage messageID;
+
+    //verify if the message if visible or not;
+    @OneToMany(mappedBy = "chatVisibleMessages", cascade = CascadeType.ALL)
+    private List<EntityMessagesChat> visibleMessages;
 
 }

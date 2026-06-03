@@ -44,21 +44,26 @@ public interface ChatResource {
     CompletableFuture<UserResponseDTO> pullUserData (@PathVariable("id") String id,@RequestHeader("Authorization") String Token);
     
     @PostMapping("/messages/{id}")
-        CompletableFuture<String> sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message);
+    CompletableFuture<String> sendMessage(@PathVariable("id") String id, @RequestHeader("Authorization") String token, @RequestBody MesssageDTO message);
+
+    @PutMapping("/user/block/{id}")
+    CompletableFuture<String> blockUser(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
+
+    @PutMapping("/user/unblock/{id}")
+    CompletableFuture<String> unBlockUser(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
 
     @PutMapping("/messages/ids")
-        CompletableFuture<String> editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message);
+    CompletableFuture<String> editMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token , @RequestBody MesssageDTO message);
     
     @DeleteMapping("/messages/ids")
-        CompletableFuture<String> deleteMessages(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
+    CompletableFuture<String> deleteMessages(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 
     @PutMapping("/messages/fix/ids")
-        CompletableFuture<String> fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
+    CompletableFuture<String> fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
 
-        
     @PutMapping("/messages/verify/fix/ids")
-        public CompletableFuture<ReturnTimeResponse> verifyFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
+    CompletableFuture<ReturnTimeResponse> verifyFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 
     @DeleteMapping("/messages/fix/ids")
-        CompletableFuture<String> unFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
+    CompletableFuture<String> unFixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 }

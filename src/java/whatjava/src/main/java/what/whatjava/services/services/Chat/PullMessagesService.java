@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
 import lombok.Value;
 import what.whatjava.entitys.chats.EntityChatTable;
+import what.whatjava.entitys.chats.EntityChatVisibleMessages;
 import what.whatjava.entitys.chats.EntityMessagesChat;
 import what.whatjava.entitys.logs.EntityMessageLog;
 import what.whatjava.entitys.users.EntityUser;
@@ -20,6 +20,7 @@ import what.whatjava.repository.MessageLogRepository;
 import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserFriendsRepository;
 import what.whatjava.repository.UserRepository;
+import what.whatjava.repository.VisibleMessageRepository;
 import what.whatjava.services.services.UseCase;
 import what.whatjava.services.services.Jwt.JwtService;
 
@@ -43,6 +44,9 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
 
     @Autowired
     MessageLogRepository messageLogRepository;
+
+    @Autowired
+    VisibleMessageRepository visibleMessageRepository;
     
     @Value
     public static class  InputValues implements UseCase.InputValues{
@@ -61,8 +65,7 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
         String id = input.getId();
         String Token = input.getToken();
 
-        Claims claims= jwtService.verifyToken(Token);
-        Long idLoggedUser = claims.get("id", Long.class);
+        Long idLoggedUser = jwtService.authentication(Token);
 
         Long idOtherUser = Long.parseLong(id);
 
@@ -74,7 +77,8 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
         //verify if they are friends;
         userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
 
-        Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser).or(() -> chatRepository.findByUser1AndUser2(otherUser, actualUser));
+        Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser)
+        .or(() -> chatRepository.findByUser1AndUser2(otherUser, actualUser));
 
         //message to return (can be fulled or not);
         List<EntityMessagesChat> messagesToReturn = new ArrayList<>();
@@ -85,49 +89,54 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
             //define the newest values
             org.springframework.data.domain.Pageable pageable = PageRequest.of(0,8 , org.springframework.data.domain.Sort.by("id").descending());
 
-            //pull messages
             List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound, pageable);
 
-            //set the messages non visualized to visualized 
             if(messagesChat.size() > 0){    
                for(int i =0; i < messagesChat.size(); i++){
 
-                    //Gonna define that the message was visualized;
-                    if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
-                        String status = messagesChat.get(i).getMessageID().getStatus();
+                    Optional<EntityChatVisibleMessages> vMnotVisualized = visibleMessageRepository.findByChatVisibleMessages(messagesChat.get(i));
 
-                        if(status == "not viewed"){
-                            messagesChat.get(i).getMessageID().setStatus("Visualized");
+                    EntityChatVisibleMessages vM = new EntityChatVisibleMessages();
 
-                            messagesChatRepository.save(messagesChat.get(i));
+                    if(vMnotVisualized != null){
+                        vM = vMnotVisualized.get();
+                    }
 
-                            //creation of log
-                            EntityMessageLog messageLog = new EntityMessageLog();
+                    if(vM.isVisible() == true){
+                        messagesToReturn.add(messagesChat.get(i));
+                        //Gonna define that the message was visualized;
+                        if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
+                            String status = messagesChat.get(i).getMessageID().getStatus();
 
-                            messageLog.setAction("");
+                            if(status == "not viewed"){
+                                messagesChat.get(i).getMessageID().setStatus("Visualized");
 
-                            //Create log of visualization
-                            Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
+                                messagesChatRepository.save(messagesChat.get(i));
 
-                            messageLog.setMessageIdLog(messagesChat.get(i).getMessageID());
-                            messageLog.setAction("User visualized the message");
-                            messageLog.setTime(timeNow);
-                            messageLog.setUserIdMessage(messagesChat.get(i).getMessageID().getUserID());
-                            messageLogRepository.save(messageLog);
+                                //creation of log
+                                EntityMessageLog messageLog = new EntityMessageLog();
+
+                                messageLog.setAction("");
+
+                                //Create log of visualization
+                                Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
+
+                                messageLog.setMessageIdLog(messagesChat.get(i).getMessageID());
+                                messageLog.setAction("User visualized the message");
+                                messageLog.setTime(timeNow);
+                                messageLog.setUserIdMessage(messagesChat.get(i).getMessageID().getUserID());
+                                messageLogRepository.save(messageLog);
+                            }
                         }
                     }
                }
                
-               return new OutPutValues(messagesChat);
+               return new OutPutValues(messagesToReturn);
             }
 
-            else {
-                return new OutPutValues(messagesToReturn);
-            }
+            return new OutPutValues(messagesToReturn);
         }
 
         return new OutPutValues(messagesToReturn);
     }
-
-
 }

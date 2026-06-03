@@ -12,6 +12,7 @@ import what.whatjava.dtos.UserResponseDTO;
 import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.dtos.DomainListDTO;
 import what.whatjava.resources.ChatResource;
+import what.whatjava.services.ResponseRequest.BlockUserResponse;
 import what.whatjava.services.ResponseRequest.DeleteMessageResponse;
 import what.whatjava.services.ResponseRequest.EditMessageResponse;
 import what.whatjava.services.ResponseRequest.FindsChatResponse;
@@ -21,9 +22,11 @@ import what.whatjava.services.ResponseRequest.PullOptionsResponse;
 import what.whatjava.services.ResponseRequest.PullUserDataResponse;
 import what.whatjava.services.ResponseRequest.SearchFriendsResponse;
 import what.whatjava.services.ResponseRequest.SendMessageResponse;
+import what.whatjava.services.ResponseRequest.UnBlockUserResponse;
 import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse;
 import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse.ReturnTimeResponse;
 import what.whatjava.services.services.ServiceExecute;
+import what.whatjava.services.services.Chat.BlockUserService;
 import what.whatjava.services.services.Chat.DeleteMessagesService;
 import what.whatjava.services.services.Chat.EditMessageService;
 import what.whatjava.services.services.Chat.FindChatsService;
@@ -33,6 +36,7 @@ import what.whatjava.services.services.Chat.PullMessagesService;
 import what.whatjava.services.services.Chat.PullUserDataService;
 import what.whatjava.services.services.Chat.SearchFriendsService;
 import what.whatjava.services.services.Chat.SendMessageService;
+import what.whatjava.services.services.Chat.UnBlockUserService;
 import what.whatjava.services.services.Chat.UnFixMessageService;
 import what.whatjava.services.services.Chat.VerifyFixedTimeService;
 import what.whatjava.services.services.Jwt.JwtService;
@@ -60,6 +64,12 @@ public class ChatController implements ChatResource {
 
     @Autowired
     private SendMessageService sendMessageService; 
+
+    @Autowired
+    private BlockUserService blockUserService;
+
+    @Autowired
+    private UnBlockUserService unBlockUserService;
 
     @Autowired
     private EditMessageService editMessageService;
@@ -136,7 +146,7 @@ public class ChatController implements ChatResource {
         return ServiceExecute.execute(
             pullUserDataService, 
             new PullUserDataService.InputValues(id, cleanToken), 
-            (output) -> PullUserDataResponse.from((output.getFindedUser()))
+            (output) -> PullUserDataResponse.from(output.getFindedUser(), output.isBlocked(), output.isLoggedUserWhoBlock())
         );
      }
 
@@ -153,6 +163,30 @@ public class ChatController implements ChatResource {
     }
 
     @Override
+    public CompletableFuture<String> blockUser(String id, String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        return ServiceExecute.execute(                           
+                blockUserService,
+                new BlockUserService.InputValues(id, cleanToken),
+                (output) -> BlockUserResponse.from(output.getMessage())
+        );
+    }
+
+    @Override
+    public CompletableFuture<String> unBlockUser(String id, String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        return ServiceExecute.execute(                           
+                unBlockUserService,
+                new UnBlockUserService.InputValues(id, cleanToken),
+                (output) -> UnBlockUserResponse.from(output.getMessage())
+        );
+    }
+
+    @Override
     @PutMapping("/messages/ids")
     public CompletableFuture<String> editMessage(List<Number> ids, String token ,   MesssageDTO message) {
 
@@ -164,7 +198,6 @@ public class ChatController implements ChatResource {
             (output) -> EditMessageResponse.from(output.getResponse())
         );
     }
-    
 
     @Override
     @DeleteMapping("/messages/ids")

@@ -240,3 +240,55 @@ export const verifyFixedMessageService = async(ids: Number[], token: string) => 
 
     }
 }
+
+export const blockUserService = async(idChat: string, token: string) => {
+    try{
+
+        console.log("IdChat :", idChat, "Token :", token);
+
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/user/block/${idChat}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response : string = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}
+
+export const unBlockUserService = async(idChat: string, token: string) => {
+    try{
+
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/user/unblock/${idChat}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response : string = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}

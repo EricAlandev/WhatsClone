@@ -4,6 +4,8 @@ import java.util.List;
 import jakarta.persistence.*;
 import lombok.*;
 import what.whatjava.entitys.chats.EntityChatTable;
+import what.whatjava.entitys.chats.EntityChatVisibleMessages;
+import what.whatjava.entitys.logs.EntityBlockedLog;
 import what.whatjava.entitys.logs.EntityMessageLog;
 
 @Entity
@@ -62,4 +64,13 @@ public class EntityUser {
     @OneToMany(mappedBy = "userIdMessage", cascade = CascadeType.ALL)
     private List<EntityMessageLog> messages;
 
+    @OneToMany(mappedBy = "userVisibleMessage", cascade = CascadeType.ALL)
+    private List<EntityChatVisibleMessages> visibleMessage;
+
+    //blocked Logs;
+    @OneToMany(mappedBy = "userWhoFetch", cascade = CascadeType.ALL)
+    private List<EntityBlockedLog> userWhoMakeTheBlock;
+
+    @OneToMany(mappedBy = "affectedUser", cascade = CascadeType.ALL)
+    private List<EntityBlockedLog> userWhoGotBlocked;
 }

@@ -16,16 +16,11 @@ export default function HeaderUserDetail({userData, isUserDetailOpen, setIsUserD
 
     return(
         <>
-            {isUserDetailOpen === true && (
-                <div
-                className="fixed w-full h-screen bg-[#161717] z-50"
-                >  
                     <img
                       src={"/messages/close.png"}
                       onClick={() => {
                         setIsUserDetailOpen(false);
                       }}
-                      className="mt-5 ml-5"
                     />
                     
                     {/*Body of the UserDetail */}
@@ -56,9 +51,7 @@ export default function HeaderUserDetail({userData, isUserDetailOpen, setIsUserD
                         </div>
 
                         {/*Description */}
-                        <div
-                            className="mt-5 ml-5"
-                        >
+                        <div>
                             <p>Recado</p>
 
                             <p
@@ -68,9 +61,6 @@ export default function HeaderUserDetail({userData, isUserDetailOpen, setIsUserD
                             </p>
                         </div>
                     </div>
-
-                </div>
-            )}
         </>
     )
 }

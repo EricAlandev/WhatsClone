@@ -56,4 +56,11 @@ public class JwtService {
 
             return cleanToken;
     } 
+
+    public Long authentication(String token){
+        Claims claims = verifyToken(token);
+        Long idUser = claims.get("id", Long.class);
+
+        return idUser;
+    }
 }

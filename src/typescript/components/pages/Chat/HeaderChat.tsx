@@ -1,5 +1,5 @@
 import Link from "next/link"
-import UserDetail from "./UserDetail"
+import UserDetail from "./userDetail/UserDetail"
 
 type HeaderChatPage = {
     name?: string,

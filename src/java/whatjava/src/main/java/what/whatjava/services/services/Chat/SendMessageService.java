@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import lombok.Value;
 import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.entitys.chats.EntityChatTable;
+import what.whatjava.entitys.chats.EntityChatVisibleMessages;
 import what.whatjava.entitys.chats.EntityMessage;
 import what.whatjava.entitys.chats.EntityMessagesChat;
 import what.whatjava.entitys.logs.EntityMessageLog;
@@ -19,6 +20,7 @@ import what.whatjava.repository.MessageLogRepository;
 import what.whatjava.repository.MessageRepository;
 import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserRepository;
+import what.whatjava.repository.VisibleMessageRepository;
 import what.whatjava.services.services.UseCase;
 import what.whatjava.services.services.Jwt.JwtService;
 
@@ -42,6 +44,9 @@ public class SendMessageService implements UseCase<SendMessageService.InputValue
 
     @Autowired
     MessageRepository messageRepository;
+
+    @Autowired
+    VisibleMessageRepository visibleMessageRepository;
     
     @Value
     public static class  InputValues implements UseCase.InputValues{
@@ -63,11 +68,7 @@ public class SendMessageService implements UseCase<SendMessageService.InputValue
             String Token = input.getCleanToken();
             String message = input.getMessage().getMessage();
 
-            System.out.println("ALL OF THE MESSAGESS----------------------------------" + message);
-
-            Claims claims = jwtService.verifyToken(Token);
-
-            Long idActualUser = claims.get("id", Long.class);
+            Long idActualUser = jwtService.authentication(Token);
             Long idOtherUser = Long.parseLong(id);
 
             //find users
@@ -86,6 +87,7 @@ public class SendMessageService implements UseCase<SendMessageService.InputValue
                 
                     newChatTable.setUser1(actualUser);
                     newChatTable.setUser2(otherUser);
+                    newChatTable.setBlocked(false);
                     chatRepository.save(newChatTable);
                     chatTable = newChatTable;
             }
@@ -94,37 +96,50 @@ public class SendMessageService implements UseCase<SendMessageService.InputValue
                 chatTable = chatTableFound.get();
             }
 
-            //create message
-            EntityMessage messageValue = new EntityMessage();
-            Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
+            if(chatTable.isBlocked() == false){
+                //create message
+                EntityMessage messageValue = new EntityMessage();
+                Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
 
-            messageValue.setMessage(message);
-            messageValue.setStatus("not viewed");
-            messageValue.setUserID(actualUser);
-            messageValue.setTime(timeNow);
-            messageValue.setEdited(false);
-            messageValue.setFixed(false);
-            messageValue.setEnd_fixed(timeNow);
-            messageRepository.save(messageValue);
+                messageValue.setMessage(message);
+                messageValue.setStatus("not viewed");
+                messageValue.setUserID(actualUser);
+                messageValue.setTime(timeNow);
+                messageValue.setEdited(false);
+                messageValue.setFixed(false);
+                messageValue.setEnd_fixed(timeNow);
+                messageRepository.save(messageValue);
 
-            //save in messageChats;
-            EntityMessagesChat messagesChat = new EntityMessagesChat();
+                //visuability
+                EntityMessagesChat messagesChat = new EntityMessagesChat();
 
-            messagesChat.setChatTableID(chatTable);
-            messagesChat.setMessageID(messageValue);
-            messagesChatRepository.save(messagesChat);
+                messagesChat.setChatTableID(chatTable);
+                messagesChat.setMessageID(messageValue);
+                messagesChatRepository.save(messagesChat);
 
+                EntityChatVisibleMessages vM = new EntityChatVisibleMessages();
 
-            //create the log
-            EntityMessageLog messageLog = new EntityMessageLog();
+                vM.setChatVisibleMessages(messagesChat);
+                vM.setUserVisibleMessage(otherUser);
+                vM.setVisible(true);
 
-            messageLog.setMessageIdLog(messageValue);
-            messageLog.setAction("Message sended");
-            messageLog.setTime(timeNow);
-            messageLog.setUserIdMessage(actualUser);
-            messageLogRepository.save(messageLog);
+                visibleMessageRepository.save(vM);
 
-            return new OutPutValues("200 - message");
+                //create the log
+                EntityMessageLog messageLog = new EntityMessageLog();
+
+                messageLog.setMessageIdLog(messageValue);
+                messageLog.setAction("Message sended");
+                messageLog.setTime(timeNow);
+                messageLog.setUserIdMessage(actualUser);
+                messageLogRepository.save(messageLog);
+
+                return new OutPutValues("200 - message");
+            }
+
+            else{
+                return new OutPutValues("This user is blocked");
+            }
 
         } catch (Exception e) {
             return new OutPutValues("fail in the process of send the message");

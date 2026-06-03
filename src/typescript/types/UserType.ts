@@ -17,6 +17,8 @@ export type UserWithClass = {
     id?: number,
     name?: string,
     email?: string,
+    blocked?: boolean,
+    userBlockedChat: boolean,
     password?: string,
     birthday?: string,
     description?: string,

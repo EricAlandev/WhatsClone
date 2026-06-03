@@ -9,7 +9,7 @@ import HeaderChatPage from "@/typescript/components/pages/Chat/HeaderChat";
 import HeaderSelectedChat from "@/typescript/components/pages/Chat/HeaderSelectedChat";
 import RenderMessages from "@/typescript/components/pages/Chat/RenderMessages";
 import SendMessage from "@/typescript/components/pages/Chat/SendMessage";
-import UserDetail from "@/typescript/components/pages/Chat/UserDetail";
+import UserDetail from "@/typescript/components/pages/Chat/userDetail/UserDetail";
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import useChatUseCase from "@/typescript/servers/useCases/useChatUseCase";
 import { selectedIds } from "@/typescript/types/ChatType";
@@ -41,7 +41,7 @@ export default function ChatPage(){
     const {id} = useParams();
 
     //database calls
-    const {callOptions, options, callMessages, sendMessage, deleteMessage, callUserData, changeMessage,fixedMessage, unFixMessage,verifyFixedMessages , messages , userData} = useChatUseCase();
+    const {callOptions, options, callMessages, sendMessage, deleteMessage, callUserData, changeMessage,fixedMessage, unFixMessage,verifyFixedMessages, unBlockUser, messages , userData} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -68,6 +68,10 @@ export default function ChatPage(){
                     userData={userData}
                     isUserDetailOpen={isUserDetailOpen}
                     setIsUserDetailOpen={setIsUserDetailOpen}
+
+                    idChat={id}
+                    token={token}
+                    options={options}
                 />
 
                 {/*Header when at least one message is selected */}
@@ -138,6 +142,14 @@ export default function ChatPage(){
                        }
                     }}
 
+                    blocked={userData?.blocked}
+                    userBlockedChat={userData?.userBlockedChat}
+                    unBlock={() => {
+                        if(id && token){
+                            unBlockUser(id, token);
+                            callUserData(id, token);
+                        }
+                    }}
                 />
 
                 {/*POPUPS */}

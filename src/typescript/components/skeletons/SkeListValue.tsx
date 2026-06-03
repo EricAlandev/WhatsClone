@@ -4,24 +4,9 @@ import ImageStatusMessage from "./ImageStatusMessage";
 
 type SkeListValue = {
     //list type
-    idList?: number,
     nameList?: string,
     description?: string,
     image_url?: string,
-    code?: number,
-
-    idUser?: number,
-    idLoggedUser?: number,
-    name?: string,
-    descriptionUser?: string,
-
-
-    //message
-    message?: string,
-    status?: string,
-    time?: string,
-    idMessage?: number,
-    messageFromLoggedUser?: boolean,
 }
 
 export default function SkeListValue({

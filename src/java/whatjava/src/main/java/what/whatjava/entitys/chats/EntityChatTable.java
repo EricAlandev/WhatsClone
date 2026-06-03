@@ -25,9 +25,10 @@ public class EntityChatTable {
     @ManyToOne
     @JoinColumn(name = "user_2")
     private EntityUser user2;
+    
+    @Column()
+    private boolean blocked;
 
     @OneToMany(mappedBy = "chatTableID", cascade = CascadeType.ALL)
     private List<EntityMessagesChat> messageChat;
-
-
 }

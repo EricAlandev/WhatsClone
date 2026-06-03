@@ -6,3 +6,11 @@
 .label{
     @apply text-[#F1F1F1]
 }
+
+.ButtonWhenBlocked{
+    @apply w-[40vw] p-1.5 bg-[#144D37] text-[white] rounded-md;
+}
+
+.imagePattern{
+    @apply max-w-[30px] max-h-[30px];
+}

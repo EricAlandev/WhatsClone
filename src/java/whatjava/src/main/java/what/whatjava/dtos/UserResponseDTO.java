@@ -22,6 +22,8 @@ public class UserResponseDTO {
     private NacionalityDTO nacionality;
     private List<Friends> friends;
     private List<ChatsContainers> chats;
+    private boolean blocked;
+    private boolean userBlockedChat;
 
     @Data
     @Builder

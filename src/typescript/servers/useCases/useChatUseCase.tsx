@@ -5,7 +5,7 @@ import { callAllChatsService, searchFriendsService } from "../services/ServiceSe
 import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType, selectedIds } from "@/typescript/types/ChatType";
-import { alterMessageService, callAllMessagesService, callOptionsService, callUserDataService, deleteMessageService, fixMessageService, sendMessageService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
+import { alterMessageService, blockUserService, callAllMessagesService, callOptionsService, callUserDataService, deleteMessageService, fixMessageService, sendMessageService, unBlockUserService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
 import { ConfigsList } from "@/typescript/types/ConfigsListType";
 
 
@@ -85,8 +85,6 @@ export default function useChatUseCase(){
                 console.log(resultSearch);
 
                 setUserData(resultSearch);
-
-
          }
         }
 
@@ -189,6 +187,65 @@ export default function useChatUseCase(){
         }
     };
 
+    const blockUser = async(idChat: string , token: string) => {
+        try{
+            if(token && idChat){
+                await blockUserService(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+    const unBlockUser = async(idChat: string , token: string) => {
+        try{
+            if(token && idChat){
+                await unBlockUserService(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+    const deleteChat = async(token: string, idChat: string) => {
+        try{
+            if(token && idChat){
+                await blockUserService(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+    const cleanMessages = async(token: string, idChat: string) => {
+        try{
+            if(token && idChat){
+                await blockUserService(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
+
+    const Denunce = async(token: string, idChat: string) => {
+        try{
+            if(token && idChat){
+                await blockUserService(idChat, token);
+            }
+        }
+
+        catch(error){
+
+        }
+    };
 
     return {
         friendsFinded ,
@@ -206,6 +263,12 @@ export default function useChatUseCase(){
         verifyFixedMessages,
         unFixMessage,
         deleteMessage,
-        changeMessage
+        changeMessage,
+
+        unBlockUser,
+        blockUser,
+        deleteChat,
+        cleanMessages,
+        Denunce
     }
 }
