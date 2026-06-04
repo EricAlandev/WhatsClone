@@ -21,7 +21,7 @@ public class EntityChatVisibleMessages {
     @JoinColumn(name = "messages_chat_id")
     private EntityMessagesChat chatVisibleMessages;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private EntityUser userVisibleMessage;
     

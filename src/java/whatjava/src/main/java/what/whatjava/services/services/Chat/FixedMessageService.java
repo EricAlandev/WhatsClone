@@ -71,8 +71,6 @@ public class FixedMessageService implements UseCase<FixedMessageService.InputVal
 
             EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
 
-            System.out.println("Message inside of the for " + message.getId() + message.getMessage());
-
             message.setFixed(true);
 
             //verify how mutch time

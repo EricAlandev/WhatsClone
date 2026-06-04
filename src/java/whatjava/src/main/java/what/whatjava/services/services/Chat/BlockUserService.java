@@ -52,24 +52,37 @@ public class BlockUserService implements UseCase<BlockUserService.InputValues, B
     public OutPutValues execute(InputValues input){
 
         Long idUser = jwtService.authentication(input.getToken());
-
         Long idOtherUser = Long.parseLong(input.getId());
 
-        EntityUser userWhoMakeRequest = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User dosn't exist"));
+        EntityUser userWhoMakeRequest = findUser(idUser);
+        EntityUser userWhoGonnaBeBlocked = findUser(idOtherUser);
 
-        EntityUser userWhoGonnaBeBlocked = userRepository.findById(idOtherUser)
-        .orElseThrow(() -> new RuntimeException("User dosn't exist"));
-
-        EntityChatTable chat = chatRepository.findByUser1AndUser2(userWhoMakeRequest, userWhoGonnaBeBlocked)
-        .or(() -> chatRepository.findByUser1AndUser2(userWhoGonnaBeBlocked, userWhoMakeRequest))
-        .orElseThrow(() -> new RuntimeException("Chat dosn't exist"));
+        EntityChatTable chat = findChat(userWhoMakeRequest, userWhoGonnaBeBlocked);
         
         chat.setBlocked(true);
         chatRepository.save(chat);
 
-        EntityBlockedLog blocked = new EntityBlockedLog();
+        blockUser(userWhoMakeRequest, userWhoGonnaBeBlocked);
 
+        return new OutPutValues("User got Blocked");
+    }
+
+    public EntityChatTable findChat(EntityUser userWhoMakeRequest, EntityUser userWhoGonnaBeBlocked){
+
+        return chatRepository.findByUser1AndUser2(userWhoMakeRequest, userWhoGonnaBeBlocked)
+        .or(() -> chatRepository.findByUser1AndUser2(userWhoGonnaBeBlocked, userWhoMakeRequest))
+        .orElseThrow(() -> new RuntimeException("Chat dosn't exist"));
+    }
+
+    public EntityUser findUser(Long id){
+        return userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User dosn't exist"));
+    }
+
+    public void blockUser (EntityUser userWhoMakeRequest, EntityUser userWhoGonnaBeBlocked){
         Timestamp now = Timestamp.from(Instant.now());
+
+        EntityBlockedLog blocked = new EntityBlockedLog();
 
         blocked.setTime(now);
         blocked.setAction("blocked the other one");
@@ -77,7 +90,5 @@ public class BlockUserService implements UseCase<BlockUserService.InputValues, B
         blocked.setAffectedUser(userWhoGonnaBeBlocked);
 
         blockedLogRepository.save(blocked);
-
-        return new OutPutValues("User got Blocked");
     }
 }

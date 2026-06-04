@@ -3,7 +3,9 @@ package what.whatjava.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import what.whatjava.entitys.chats.EntityChatTable;
@@ -15,14 +17,15 @@ public interface MessagesChatRepository extends JpaRepository<EntityMessagesChat
 
     //Pageable its a prop that define how mutch values do u wanna pull;
     List<EntityMessagesChat> findByChatTableID(EntityChatTable chatTableIDm, org.springframework.data.domain.Pageable pageable);
-
+    
      List<EntityMessagesChat> findByChatTableID(EntityChatTable chatTableID);
 
      EntityMessagesChat findByMessageID(EntityMessage message);
 
      Optional<EntityMessagesChat> findByChatTableIDAndMessageID(EntityChatTable chatTableIDm, EntityMessage message);
 
-
+     @Query("SELECT c from EntityMessagesChat c LEFT JOIN EntityChatVisibleMessages vM ON vM.chatVisibleMessages = : chatTableID")
+    List<EntityMessagesChat> findMessagesChatsWithVisible( EntityChatTable chatTableID, Pageable pageable);
     
 }
 

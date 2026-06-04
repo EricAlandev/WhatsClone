@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.Value;
 import what.whatjava.entitys.chats.EntityChatTable;
 import what.whatjava.entitys.chats.EntityChatVisibleMessages;
+import what.whatjava.entitys.chats.EntityMessage;
 import what.whatjava.entitys.chats.EntityMessagesChat;
 import what.whatjava.entitys.logs.EntityMessageLog;
 import what.whatjava.entitys.users.EntityUser;
@@ -60,6 +64,7 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
     }
 
     @Override
+    @Transactional
     public OutPutValues execute(InputValues input){
 
         String id = input.getId();
@@ -70,12 +75,13 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
         Long idOtherUser = Long.parseLong(id);
 
         //Verify if exist the users;
-        EntityUser actualUser = userRepository.findById(idLoggedUser).orElseThrow(() -> new RuntimeException("Actual user dosn't exist"));
-        
-        EntityUser otherUser = userRepository.findById(idOtherUser).orElseThrow(() -> new RuntimeException("Other user dosn't exist"));
+        EntityUser actualUser = findUser(idLoggedUser);
+
+        EntityUser otherUser = findUser(idOtherUser);
 
         //verify if they are friends;
-        userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser).orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
+        userFriendsRepository.findByUserIDAndFriendsId(actualUser, otherUser)
+        .orElseThrow(() -> new RuntimeException("The actual user its not friend of the other user"));
 
         Optional<EntityChatTable> chatTable = chatRepository.findByUser1AndUser2(actualUser, otherUser)
         .or(() -> chatRepository.findByUser1AndUser2(otherUser, actualUser));
@@ -86,57 +92,52 @@ public class PullMessagesService implements UseCase<PullMessagesService.InputVal
         if(!chatTable.isEmpty()){
             EntityChatTable chatTableFound = chatTable.get();
 
-            //define the newest values
-            org.springframework.data.domain.Pageable pageable = PageRequest.of(0,8 , org.springframework.data.domain.Sort.by("id").descending());
-
-            List<EntityMessagesChat> messagesChat = messagesChatRepository.findByChatTableID(chatTableFound, pageable);
+            List<EntityMessagesChat> messagesChat = findMessagesChats(chatTableFound);
 
             if(messagesChat.size() > 0){    
                for(int i =0; i < messagesChat.size(); i++){
-
-                    Optional<EntityChatVisibleMessages> vMnotVisualized = visibleMessageRepository.findByChatVisibleMessages(messagesChat.get(i));
-
-                    EntityChatVisibleMessages vM = new EntityChatVisibleMessages();
-
-                    if(vMnotVisualized != null){
-                        vM = vMnotVisualized.get();
-                    }
-
-                    if(vM.isVisible() == true){
+                    if(messagesChat.get(i).getVisibleMessages().isVisible()){
                         messagesToReturn.add(messagesChat.get(i));
                         //Gonna define that the message was visualized;
                         if(!messagesChat.get(i).getMessageID().getUserID().equals(actualUser)){
                             String status = messagesChat.get(i).getMessageID().getStatus();
 
-                            if(status == "not viewed"){
+                            if(status.equals("not viewed")){
                                 messagesChat.get(i).getMessageID().setStatus("Visualized");
-
                                 messagesChatRepository.save(messagesChat.get(i));
 
-                                //creation of log
-                                EntityMessageLog messageLog = new EntityMessageLog();
-
-                                messageLog.setAction("");
-
-                                //Create log of visualization
-                                Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
-
-                                messageLog.setMessageIdLog(messagesChat.get(i).getMessageID());
-                                messageLog.setAction("User visualized the message");
-                                messageLog.setTime(timeNow);
-                                messageLog.setUserIdMessage(messagesChat.get(i).getMessageID().getUserID());
-                                messageLogRepository.save(messageLog);
+                                generateLogs(messagesChat.get(i).getMessageID());
                             }
                         }
                     }
                }
-               
-               return new OutPutValues(messagesToReturn);
             }
-
-            return new OutPutValues(messagesToReturn);
         }
 
         return new OutPutValues(messagesToReturn);
+    }
+
+    public EntityUser findUser(Long id){
+            return userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User dosn't exist"));
+    }
+
+    public List<EntityMessagesChat> findMessagesChats(EntityChatTable chatTableFound){
+            //define the newest values
+            org.springframework.data.domain.Pageable pageable = PageRequest.of(0,8 , org.springframework.data.domain.Sort.by("id").descending());
+
+            return messagesChatRepository.findMessagesChatsWithVisible(chatTableFound, pageable);
+    }
+
+    public void generateLogs (EntityMessage message){
+        Timestamp timeNow = new java.sql.Timestamp(System.currentTimeMillis());
+
+        EntityMessageLog messageLog = new EntityMessageLog();
+
+        messageLog.setMessageIdLog(message);
+        messageLog.setAction("User visualized the message");
+        messageLog.setTime(timeNow);
+        messageLog.setUserIdMessage(message.getUserID());
+        messageLogRepository.save(messageLog);
     }
 }
