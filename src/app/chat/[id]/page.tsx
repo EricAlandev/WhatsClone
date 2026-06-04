@@ -41,7 +41,7 @@ export default function ChatPage(){
     const {id} = useParams();
 
     //database calls
-    const {callOptions, options, callMessages, sendMessage, deleteMessage, callUserData, changeMessage,fixedMessage, unFixMessage,verifyFixedMessages, unBlockUser, messages , userData} = useChatUseCase();
+    const {callOptions, options, callMessages, sendMessage, deleteMessage, callUserData, changeMessage,fixedMessage, unFixMessage,verifyFixedMessages, unBlockUser, cleanMessages, messages , userData} = useChatUseCase();
     const {user, token} = useAuth();
 
     useEffect(() => {
@@ -147,7 +147,11 @@ export default function ChatPage(){
                     unBlock={() => {
                         if(id && token){
                             unBlockUser(id, token);
-                            callUserData(id, token);
+                        }
+                    }}
+                    clearMessages={() => {
+                        if(id && token){
+                            cleanMessages(id, token);
                         }
                     }}
                 />

@@ -5,11 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import lombok.Value;
+import what.whatjava.entitys.chats.EntityChatVisibleMessages;
 import what.whatjava.entitys.chats.EntityMessage;
+import what.whatjava.entitys.chats.EntityMessagesChat;
+import what.whatjava.entitys.users.EntityUser;
 import what.whatjava.repository.MessageRepository;
+import what.whatjava.repository.MessagesChatRepository;
 import what.whatjava.repository.UserRepository;
+import what.whatjava.repository.VisibleMessageRepository;
 import what.whatjava.services.services.UseCase;
 import what.whatjava.services.services.Jwt.JwtService;
 
@@ -21,6 +26,12 @@ public class DeleteMessagesService implements UseCase<DeleteMessagesService.Inpu
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private MessagesChatRepository messagesChatRepository;
+
+    @Autowired 
+    private VisibleMessageRepository visibleMessageRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -37,16 +48,16 @@ public class DeleteMessagesService implements UseCase<DeleteMessagesService.Inpu
     }
 
     @Override
+    @Transactional
     public OutPutValues execute(InputValues input){
 
         String token = input.getToken();
         List<Number> ids = input.getIds();
 
-        Claims claims = jwtService.verifyToken(token);
-        Long idUser = claims.get("id", Long.class);
+        Long idUser = jwtService.authentication(token);
 
         //verify if user exists;
-        userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("user dosn't exist"));
+        EntityUser loggedUser = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("user dosn't exist"));
 
         //find and delete the messages
         for(int i = 0; i < ids.size(); i++){
@@ -54,7 +65,16 @@ public class DeleteMessagesService implements UseCase<DeleteMessagesService.Inpu
 
             EntityMessage message = messageRepository.findById(actualId).orElseThrow(() -> new RuntimeException("Message not found"));
 
-            messageRepository.delete(message);
+            EntityMessagesChat chat = messagesChatRepository.findByMessageID(message);
+
+            if(chat != null){
+                EntityChatVisibleMessages vM = visibleMessageRepository.findByChatVisibleMessagesAndUserVisibleMessage(chat, loggedUser);
+
+                if(vM != null && vM.isVisible() == true){
+                    vM.setVisible(false);
+                    visibleMessageRepository.save(vM);
+                }
+            }
         }
 
         return new OutPutValues("Messages deleted with sucess!");

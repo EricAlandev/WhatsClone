@@ -18,6 +18,8 @@ public interface MessagesChatRepository extends JpaRepository<EntityMessagesChat
 
      List<EntityMessagesChat> findByChatTableID(EntityChatTable chatTableID);
 
+     EntityMessagesChat findByMessageID(EntityMessage message);
+
      Optional<EntityMessagesChat> findByChatTableIDAndMessageID(EntityChatTable chatTableIDm, EntityMessage message);
 
 

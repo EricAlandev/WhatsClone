@@ -58,6 +58,9 @@ public interface ChatResource {
     @DeleteMapping("/messages/ids")
     CompletableFuture<String> deleteMessages(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token);
 
+    @PutMapping("/messages/clear/{id}")
+    CompletableFuture<String> clearMessages(@PathVariable("id") String id, @RequestHeader("Authorization") String token);
+
     @PutMapping("/messages/fix/ids")
     CompletableFuture<String> fixMessage(@RequestParam("id") List<Number> ids, @RequestHeader("Authorization") String token, @RequestBody TimeToFixDTO timeToFix);
 

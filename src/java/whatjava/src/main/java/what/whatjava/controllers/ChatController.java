@@ -13,6 +13,7 @@ import what.whatjava.dtos.ChatDTO.MessageDTO;
 import what.whatjava.dtos.DomainListDTO;
 import what.whatjava.resources.ChatResource;
 import what.whatjava.services.ResponseRequest.BlockUserResponse;
+import what.whatjava.services.ResponseRequest.ClearMessagesResponse;
 import what.whatjava.services.ResponseRequest.DeleteMessageResponse;
 import what.whatjava.services.ResponseRequest.EditMessageResponse;
 import what.whatjava.services.ResponseRequest.FindsChatResponse;
@@ -27,6 +28,7 @@ import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse;
 import what.whatjava.services.ResponseRequest.VerifyFixedTimeResponse.ReturnTimeResponse;
 import what.whatjava.services.services.ServiceExecute;
 import what.whatjava.services.services.Chat.BlockUserService;
+import what.whatjava.services.services.Chat.ClearMessageUserService;
 import what.whatjava.services.services.Chat.DeleteMessagesService;
 import what.whatjava.services.services.Chat.EditMessageService;
 import what.whatjava.services.services.Chat.FindChatsService;
@@ -85,6 +87,9 @@ public class ChatController implements ChatResource {
 
     @Autowired
     private UnFixMessageService unFixMessageService;
+
+    @Autowired
+    ClearMessageUserService clearMessageUserService;
 
 
     @Autowired
@@ -209,6 +214,19 @@ public class ChatController implements ChatResource {
             deleteMessagesService, 
             new DeleteMessagesService.InputValues(ids, cleanToken),
             (output) -> DeleteMessageResponse.from(output.getResponse())
+        );
+    }
+
+    @Override
+    @PutMapping("/messages/clear/{id}")
+    public CompletableFuture<String> clearMessages(String id, String token) {
+
+        String cleanToken = jwtService.pickTokenFromHeader(token);
+
+        return ServiceExecute.execute(
+            clearMessageUserService, 
+            new ClearMessageUserService.InputValues(id, cleanToken),
+            (output) -> ClearMessagesResponse.from(output.getMessage())
         );
     }
 

@@ -5,7 +5,7 @@ import { callAllChatsService, searchFriendsService } from "../services/ServiceSe
 import { useCallback, useState } from "react"
 import { useAuth } from "@/typescript/contexts/GlobalContext";
 import { ChatType, MessageType, selectedIds } from "@/typescript/types/ChatType";
-import { alterMessageService, blockUserService, callAllMessagesService, callOptionsService, callUserDataService, deleteMessageService, fixMessageService, sendMessageService, unBlockUserService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
+import { alterMessageService, blockUserService, callAllMessagesService, callOptionsService, callUserDataService, clearMessagesService, deleteMessageService, fixMessageService, sendMessageService, unBlockUserService, unfixMessageService, verifyFixedMessageService } from "../services/ServiceChat";
 import { ConfigsList } from "@/typescript/types/ConfigsListType";
 
 
@@ -191,6 +191,7 @@ export default function useChatUseCase(){
         try{
             if(token && idChat){
                 await blockUserService(idChat, token);
+                await callUserData(idChat, token);
             }
         }
 
@@ -203,6 +204,7 @@ export default function useChatUseCase(){
         try{
             if(token && idChat){
                 await unBlockUserService(idChat, token);
+                await callUserData(idChat, token);
             }
         }
 
@@ -223,10 +225,11 @@ export default function useChatUseCase(){
         }
     };
 
-    const cleanMessages = async(token: string, idChat: string) => {
+    const cleanMessages = async(idChat: string, token: string ) => {
         try{
             if(token && idChat){
-                await blockUserService(idChat, token);
+                await clearMessagesService(idChat, token);
+                await callMessages(idChat, token);
             }
         }
 

@@ -292,3 +292,28 @@ export const unBlockUserService = async(idChat: string, token: string) => {
 
     }
 }
+
+export const clearMessagesService = async(idChat: string, token: string) => {
+    try{
+        console.log("before the fetch of the clean messages", idChat, token);
+        const call = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL2}/chat/messages/clear/${idChat}`, {
+            method: "PUT",
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            }
+        })
+
+        if(!call.ok){
+            throw new Error("fail in the service fetch");
+        }
+
+        const response : string = await call.json();
+
+        return response;
+    }
+
+    catch(error){
+
+    }
+}

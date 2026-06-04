@@ -27,6 +27,6 @@ public class EntityMessagesChat {
 
     //verify if the message if visible or not;
     @OneToMany(mappedBy = "chatVisibleMessages", cascade = CascadeType.ALL)
-    private List<EntityMessagesChat> visibleMessages;
+    private List<EntityChatVisibleMessages> visibleMessages;
 
 }

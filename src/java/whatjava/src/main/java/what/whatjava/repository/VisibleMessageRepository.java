@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import what.whatjava.entitys.chats.EntityChatVisibleMessages;
 import what.whatjava.entitys.chats.EntityMessagesChat;
+import what.whatjava.entitys.users.EntityUser;
 
 public interface VisibleMessageRepository extends JpaRepository<EntityChatVisibleMessages, Long> {
     
     Optional<EntityChatVisibleMessages> findByChatVisibleMessages(EntityMessagesChat messagesChat );
+
+    EntityChatVisibleMessages findByChatVisibleMessagesAndUserVisibleMessage(EntityMessagesChat messagesChat, EntityUser user );
 }

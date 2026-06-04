@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
 import lombok.Value;
 import what.whatjava.dtos.MesssageDTO;
 import what.whatjava.entitys.chats.EntityChatTable;
@@ -120,7 +119,7 @@ public class SendMessageService implements UseCase<SendMessageService.InputValue
                 EntityChatVisibleMessages vM = new EntityChatVisibleMessages();
 
                 vM.setChatVisibleMessages(messagesChat);
-                vM.setUserVisibleMessage(otherUser);
+                vM.setUserVisibleMessage(actualUser);
                 vM.setVisible(true);
 
                 visibleMessageRepository.save(vM);

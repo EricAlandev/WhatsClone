@@ -89,6 +89,6 @@ public class ClearMessageUserService implements UseCase<ClearMessageUserService.
             }
         }
 
-        return new OutPutValues("He Unblocked");
+        return new OutPutValues("Cleaned Messages");
     }
 }
